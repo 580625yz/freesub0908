@@ -5,6 +5,13 @@ mode: rule
 log-level: info
 proxies:
 - name: 🇰🇿 KZ 01 - xiaohe
+  type: hysteria2
+  server: 194.238.40.185
+  port: 443
+  password: eb0e3aec-f67f-4fa2-8577-b0bff0484e77
+  udp: true
+  skip-cert-verify: true
+- name: 🇰🇿 KZ 02 - xiaohe
   type: vless
   server: 77.73.232.61
   port: 19747
@@ -16,7 +23,7 @@ proxies:
     public-key: ZO9dTeg1slvTXgVsBsaJ1BDvz_YUImTLJjbHs-GdVyM
   servername: yahoo.com
   client-fingerprint: chrome
-- name: 🇰🇿 KZ 02 - xiaohe
+- name: 🇰🇿 KZ 03 - xiaohe
   type: vless
   server: 83.222.23.81
   port: 38065
@@ -28,13 +35,6 @@ proxies:
     public-key: dSSDPTK6AHfAdRAXD9i4rzqcNIY65RxlF25UyCKdiyo
   servername: yahoo.com
   client-fingerprint: chrome
-- name: 🇰🇿 KZ 03 - xiaohe
-  type: hysteria2
-  server: 194.238.40.185
-  port: 443
-  password: eb0e3aec-f67f-4fa2-8577-b0bff0484e77
-  udp: true
-  skip-cert-verify: true
 proxy-groups:
 - name: PROXIES
   type: select

@@ -16,7 +16,7 @@ proxies:
   ws-opts:
     path: /
     headers:
-      Host: 89.36.161.222
+      Host: laoye.in-gect.fun
 - name: 🇱🇻 LV 02 - xiaohe
   type: vless
   server: 89.36.161.222
@@ -29,7 +29,7 @@ proxies:
   ws-opts:
     path: /
     headers:
-      Host: 89.36.161.222
+      Host: laoye.in-gect.fun
 - name: 🇱🇻 LV 03 - xiaohe
   type: vless
   server: 89.36.161.222
@@ -42,12 +42,12 @@ proxies:
   ws-opts:
     path: /
     headers:
-      Host: laoye.in-gect.fun
+      Host: 89.36.161.222
 - name: 🇱🇻 LV 04 - xiaohe
   type: hysteria2
-  server: hy2-latvia2.unlimited-access.ru
-  port: 443
-  password: GSPOBvG-ZwYcBFMr0ekFGO_Zga3wK6v_
+  server: 104.165.205.42
+  port: 8443
+  password: 990c8eb6-4c4e-4277-8602-79af8402cdd0
   udp: true
   skip-cert-verify: true
 - name: 🇱🇻 LV 05 - xiaohe
@@ -75,19 +75,19 @@ proxies:
   ws-opts:
     path: /
     headers:
-      Host: laoye.in-gect.fun
+      Host: 89.36.161.222
 - name: 🇱🇻 LV 07 - xiaohe
-  type: hysteria2
-  server: 104.165.205.42
-  port: 8443
-  password: 52e3dd44-ed23-4030-b0cc-5b5a953f2d4d
-  udp: true
-  skip-cert-verify: true
-- name: 🇱🇻 LV 08 - xiaohe
   type: hysteria2
   server: 85.159.228.22
   port: 443
   password: GSPOBvG-ZwYcBFMr0ekFGO_Zga3wK6v_
+  udp: true
+  skip-cert-verify: true
+- name: 🇱🇻 LV 08 - xiaohe
+  type: hysteria2
+  server: 104.165.205.42
+  port: 8443
+  password: 52e3dd44-ed23-4030-b0cc-5b5a953f2d4d
   udp: true
   skip-cert-verify: true
 proxy-groups:
