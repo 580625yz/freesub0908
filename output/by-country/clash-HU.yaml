@@ -4,25 +4,25 @@ allow-lan: true
 mode: rule
 log-level: info
 proxies:
-- name: 🇧🇬 BG 01 (家宽) - xiaohe
-  type: vless
-  server: 192.145.31.5
-  port: 8443
-  uuid: 9f73cf9a-c68f-4e6d-90f0-e66b64f52f8a
+- name: 🇭🇺 HU 01 - xiaohe
+  type: trojan
+  server: 46.29.142.57
+  port: 4443
+  password: C0ldyfh-vpnjantit.com
   udp: true
-  tls: true
+  sni: hu2.vpnjantit.com
   skip-cert-verify: true
 proxy-groups:
 - name: PROXIES
   type: select
   proxies:
   - AUTO
-  - 🇧🇬 BG 01 (家宽) - xiaohe
+  - 🇭🇺 HU 01 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
   interval: 300
   proxies:
-  - 🇧🇬 BG 01 (家宽) - xiaohe
+  - 🇭🇺 HU 01 - xiaohe
 rules:
 - MATCH,PROXIES
