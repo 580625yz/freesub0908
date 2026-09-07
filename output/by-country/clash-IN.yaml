@@ -15,20 +15,26 @@ proxies:
   reality-opts:
     public-key: R06_DTSjzQI9DswvRz9OqSBECfSwlpCMPR4DCc9oXyw
   servername: www.apple.com
-  client-fingerprint: firefox
+  client-fingerprint: random
 - name: 🇮🇳 印度 (India) 02 - xiaohe
-  type: vless
-  server: 172.64.229.170
-  port: 8080
-  uuid: 47fcef29-ab4e-4aa6-932b-d95a18f28a4e
+  type: hysteria2
+  server: 141.148.222.181
+  port: 51000
+  password: 6390e4f6-fdc8-46eb-b474-805cf3d80439
   udp: true
-  tls: false
   skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /?ed=2560security=tls
-    headers:
-      Host: 8nj2r.2k8t.f88.hh.vavava.kdns.fr
+- name: 🇮🇳 印度 (India) 03 - xiaohe
+  type: vless
+  server: 194.61.31.126
+  port: 2053
+  uuid: 50ddfd92-dc79-4777-a256-41e34d56836e
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  reality-opts:
+    public-key: R06_DTSjzQI9DswvRz9OqSBECfSwlpCMPR4DCc9oXyw
+  servername: www.apple.com
+  client-fingerprint: firefox
 proxy-groups:
 - name: PROXIES
   type: select
@@ -36,6 +42,7 @@ proxy-groups:
   - AUTO
   - 🇮🇳 印度 (India) 01 - xiaohe
   - 🇮🇳 印度 (India) 02 - xiaohe
+  - 🇮🇳 印度 (India) 03 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -43,5 +50,6 @@ proxy-groups:
   proxies:
   - 🇮🇳 印度 (India) 01 - xiaohe
   - 🇮🇳 印度 (India) 02 - xiaohe
+  - 🇮🇳 印度 (India) 03 - xiaohe
 rules:
 - MATCH,PROXIES

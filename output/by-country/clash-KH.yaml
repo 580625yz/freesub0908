@@ -7,14 +7,14 @@ proxies:
 - name: 🇰🇭 KH 01 - xiaohe
   type: ss
   server: catnet-other.kunlun04dns.com
-  port: 28035
+  port: 28036
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
 - name: 🇰🇭 KH 02 - xiaohe
   type: ss
   server: catnet-other.kunlun04dns.com
-  port: 28036
+  port: 28035
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true

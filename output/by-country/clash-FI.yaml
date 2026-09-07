@@ -5,6 +5,41 @@ mode: rule
 log-level: info
 proxies:
 - name: 🇫🇮 FI 01 - xiaohe
+  type: hysteria2
+  server: fin1.apexvpn.space
+  port: 443
+  password: 9311376a-814b-49b3-af70-9c7e7507e20f
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 02 - xiaohe
+  type: hysteria2
+  server: 31.76.30.97
+  port: 443
+  password: C91FbOXGY9XRymrcEebtax9R1Nj62UizoT8S6kCb7xwey8IE
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 03 - xiaohe
+  type: hysteria2
+  server: fin1.apexvpn.space
+  port: 443
+  password: 9311376a-814b-49b3-af70-9c7e7507e20f
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 04 - xiaohe
+  type: hysteria2
+  server: 138.124.0.168
+  port: 8080
+  password: h_B9x3942fJ9x_Kpx3914KQ_nZ934HFg_rT
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 05 - xiaohe
+  type: hysteria2
+  server: 78.17.187.184
+  port: 443
+  password: BPvdjudCGodsF67hRP3xgBYvcKp48coTsh6ANydLhQs=
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 06 - xiaohe
   type: vless
   server: 2.26.122.101
   port: 8443
@@ -16,7 +51,21 @@ proxies:
     public-key: NI5Rkfn6zO_gF-UC1nuvJwu4SDakCXh3ygJOKU1EITU
   servername: cdn.shopify.com
   client-fingerprint: firefox
-- name: 🇫🇮 FI 02 - xiaohe
+- name: 🇫🇮 FI 07 - xiaohe
+  type: hysteria2
+  server: 138.124.0.168
+  port: 8080
+  password: h_B9x3942fJ9x_Kpx3914KQ_nZ934HFg_rT
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 08 - xiaohe
+  type: hysteria2
+  server: 185.79.138.71
+  port: 8080
+  password: h_B9x3942fJ9x_Kpx3914KQ_nZ934HFg_rT
+  udp: true
+  skip-cert-verify: true
+- name: 🇫🇮 FI 09 - xiaohe
   type: vless
   server: 185.79.138.71
   port: 448
@@ -35,6 +84,13 @@ proxy-groups:
   - AUTO
   - 🇫🇮 FI 01 - xiaohe
   - 🇫🇮 FI 02 - xiaohe
+  - 🇫🇮 FI 03 - xiaohe
+  - 🇫🇮 FI 04 - xiaohe
+  - 🇫🇮 FI 05 - xiaohe
+  - 🇫🇮 FI 06 - xiaohe
+  - 🇫🇮 FI 07 - xiaohe
+  - 🇫🇮 FI 08 - xiaohe
+  - 🇫🇮 FI 09 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -42,5 +98,12 @@ proxy-groups:
   proxies:
   - 🇫🇮 FI 01 - xiaohe
   - 🇫🇮 FI 02 - xiaohe
+  - 🇫🇮 FI 03 - xiaohe
+  - 🇫🇮 FI 04 - xiaohe
+  - 🇫🇮 FI 05 - xiaohe
+  - 🇫🇮 FI 06 - xiaohe
+  - 🇫🇮 FI 07 - xiaohe
+  - 🇫🇮 FI 08 - xiaohe
+  - 🇫🇮 FI 09 - xiaohe
 rules:
 - MATCH,PROXIES

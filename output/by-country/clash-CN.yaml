@@ -1,0 +1,36 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: rule
+log-level: info
+proxies:
+- name: 🇨🇳 CN 01 - xiaohe
+  type: hysteria2
+  server: 167.179.34.31
+  port: 55443
+  password: 083417772bc618cd61f0cca23dd91680
+  udp: true
+  skip-cert-verify: true
+- name: 🇨🇳 CN 02 - xiaohe
+  type: hysteria2
+  server: 167.179.34.13
+  port: 55443
+  password: 6f7a8009ecf6a12e10d03f9d88493c89
+  udp: true
+  skip-cert-verify: true
+proxy-groups:
+- name: PROXIES
+  type: select
+  proxies:
+  - AUTO
+  - 🇨🇳 CN 01 - xiaohe
+  - 🇨🇳 CN 02 - xiaohe
+- name: AUTO
+  type: url-test
+  url: https://www.google.com/generate_204
+  interval: 300
+  proxies:
+  - 🇨🇳 CN 01 - xiaohe
+  - 🇨🇳 CN 02 - xiaohe
+rules:
+- MATCH,PROXIES

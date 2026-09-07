@@ -5,126 +5,55 @@ mode: rule
 log-level: info
 proxies:
 - name: 🇭🇰 中国香港 (Hong Kong) 01 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28007
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  type: hysteria2
+  server: mz.hkychina.com
+  port: 8443
+  password: HysTeria2026%21Proxy
   udp: true
+  skip-cert-verify: true
 - name: 🇭🇰 中国香港 (Hong Kong) 02 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28005
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
+  skip-cert-verify: true
 - name: 🇭🇰 中国香港 (Hong Kong) 03 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28004
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
+  skip-cert-verify: true
 - name: 🇭🇰 中国香港 (Hong Kong) 04 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28001
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
+  skip-cert-verify: true
 - name: 🇭🇰 中国香港 (Hong Kong) 05 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28003
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
+  skip-cert-verify: true
 - name: 🇭🇰 中国香港 (Hong Kong) 06 - xiaohe
-  type: vmess
-  server: u2frxj0g13vdi0wo.v.3dns.vip
+  type: hysteria2
+  server: 202.146.222.29
   port: 443
-  uuid: f23bb427-c1f9-4373-876c-2f43e9f790f3
-  alterId: 0
-  cipher: auto
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
-  tls: true
   skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /ws-vmess
-    headers:
-      Host: U2FRxj0G13vDI0Wo.v.3dns.vip
 - name: 🇭🇰 中国香港 (Hong Kong) 07 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28006
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
+  skip-cert-verify: true
 - name: 🇭🇰 中国香港 (Hong Kong) 08 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28002
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇭🇰 中国香港 (Hong Kong) 09 - xiaohe
-  type: vmess
-  server: www.shopify.com
-  port: 443
-  uuid: d187a23a-76a9-4d55-84e3-ea3b8b222cbf
-  alterId: 0
-  cipher: auto
-  udp: true
-  tls: true
-  skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /d187a23a-76a9-4d55-84e3-ea3b8b222cbf-vm
-    headers:
-      Host: dimensional-regularly-buildings-keys.trycloudflare.com
-- name: 🇭🇰 中国香港 (Hong Kong) 10 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28009
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇭🇰 中国香港 (Hong Kong) 11 - xiaohe
-  type: ss
-  server: catnet-hk.kunlun04dns.com
-  port: 28008
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇭🇰 中国香港 (Hong Kong) 12 - xiaohe
-  type: vmess
-  server: 8.218.184.4
-  port: 443
-  uuid: f23bb427c1f94373876c2f43e9f790f3
-  alterId: 0
-  cipher: auto
-  udp: true
-  tls: true
-  skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /ws-vmess
-    headers:
-      Host: NYcQg19zkwaCPM1B.v.3dns.vip
-- name: 🇭🇰 中国香港 (Hong Kong) 13 - xiaohe
-  type: vless
-  server: 47.238.210.5
-  port: 13779
-  uuid: 928e6cce-8ced-4243-9a48-a6642edd09b0
-  udp: true
-  tls: true
-  skip-cert-verify: true
-  reality-opts:
-    public-key: llTyp52oRXnJmQ3I9UUrmlwbMA79B-wLCRHCu-8dLGg
-  servername: tesla.com
-  client-fingerprint: chrome
-- name: 🇭🇰 中国香港 (Hong Kong) 14 - xiaohe
   type: vmess
   server: m01c7b2z26dtqgee.v.3dns.vip
   port: 443
@@ -139,22 +68,63 @@ proxies:
     path: /ws-vmess
     headers:
       Host: M01c7B2z26DtQGEe.v.3dns.vip
-- name: 🇭🇰 中国香港 (Hong Kong) 15 - xiaohe
-  type: vmess
-  server: ce0gedpxwou6cqon.v.3dns.vip
+- name: 🇭🇰 中国香港 (Hong Kong) 09 - xiaohe
+  type: hysteria2
+  server: 202.146.222.174
   port: 443
-  uuid: f23bb427c1f94373876c2f43e9f790f3
-  alterId: 0
-  cipher: auto
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
   udp: true
-  tls: true
   skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /ws-vmess
-    headers:
-      Host: ce0gedpxwou6cqon.v.3dns.vip
+- name: 🇭🇰 中国香港 (Hong Kong) 10 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28006
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 11 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 12 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 13 - xiaohe
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 14 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 15 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28004
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
 - name: 🇭🇰 中国香港 (Hong Kong) 16 - xiaohe
+  type: hysteria2
+  server: 202.146.222.174
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 17 - xiaohe
   type: vmess
   server: 156.245.232.239
   port: 35043
@@ -169,6 +139,258 @@ proxies:
     path: /
     headers:
       Host: ''
+- name: 🇭🇰 中国香港 (Hong Kong) 18 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 19 - xiaohe
+  type: vmess
+  server: www.shopify.com
+  port: 443
+  uuid: d187a23a-76a9-4d55-84e3-ea3b8b222cbf
+  alterId: 0
+  cipher: auto
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /d187a23a-76a9-4d55-84e3-ea3b8b222cbf-vm
+    headers:
+      Host: dimensional-regularly-buildings-keys.trycloudflare.com
+- name: 🇭🇰 中国香港 (Hong Kong) 20 - xiaohe
+  type: hysteria2
+  server: 202.146.222.174
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 21 - xiaohe
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 22 - xiaohe
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 23 - xiaohe
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 24 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28001
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 25 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28007
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 26 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28003
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 27 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 28 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28009
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 29 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28002
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 30 - xiaohe
+  type: vless
+  server: 47.238.210.5
+  port: 13779
+  uuid: 928e6cce-8ced-4243-9a48-a6642edd09b0
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  reality-opts:
+    public-key: llTyp52oRXnJmQ3I9UUrmlwbMA79B-wLCRHCu-8dLGg
+  servername: tesla.com
+  client-fingerprint: chrome
+- name: 🇭🇰 中国香港 (Hong Kong) 31 - xiaohe
+  type: vless
+  server: 47.238.210.5
+  port: 13779
+  uuid: 928e6cce-8ced-4243-9a48-a6642edd09b0
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  reality-opts:
+    public-key: llTyp52oRXnJmQ3I9UUrmlwbMA79B-wLCRHCu-8dLGg
+  servername: tesla.com
+  client-fingerprint: chrome
+- name: 🇭🇰 中国香港 (Hong Kong) 32 - xiaohe
+  type: vmess
+  server: qtkdr8jxe3wefxjm.v.3dns.vip
+  port: 443
+  uuid: f23bb427c1f94373876c2f43e9f790f3
+  alterId: 0
+  cipher: auto
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /ws-vmess
+    headers:
+      Host: qTKDR8jXE3wEFxJM.v.3dns.vip
+- name: 🇭🇰 中国香港 (Hong Kong) 33 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 34 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 35 - xiaohe
+  type: vmess
+  server: 8.218.184.4
+  port: 443
+  uuid: f23bb427c1f94373876c2f43e9f790f3
+  alterId: 0
+  cipher: auto
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /ws-vmess
+    headers:
+      Host: NYcQg19zkwaCPM1B.v.3dns.vip
+- name: 🇭🇰 中国香港 (Hong Kong) 36 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 37 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28008
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 38 - xiaohe
+  type: hysteria2
+  server: 202.146.222.174
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 39 - xiaohe
+  type: hysteria2
+  server: 202.146.222.174
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 40 - xiaohe
+  type: hysteria2
+  server: 202.146.222.174
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 41 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28010
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇭🇰 中国香港 (Hong Kong) 42 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 43 - xiaohe
+  type: hysteria2
+  server: 202.146.222.29
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 44 - xiaohe
+  type: vmess
+  server: u2frxj0g13vdi0wo.v.3dns.vip
+  port: 443
+  uuid: f23bb427-c1f9-4373-876c-2f43e9f790f3
+  alterId: 0
+  cipher: auto
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /ws-vmess
+    headers:
+      Host: U2FRxj0G13vDI0Wo.v.3dns.vip
+- name: 🇭🇰 中国香港 (Hong Kong) 45 - xiaohe
+  type: hysteria2
+  server: 95.214.181.243
+  port: 24591
+  password: ae845cbd-08fb-4346-929a-e28a6f3960a8
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 46 - xiaohe
+  type: hysteria2
+  server: 202.146.222.89
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
+- name: 🇭🇰 中国香港 (Hong Kong) 47 - xiaohe
+  type: ss
+  server: catnet-hk.kunlun04dns.com
+  port: 28005
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
 proxy-groups:
 - name: PROXIES
   type: select
@@ -190,6 +412,37 @@ proxy-groups:
   - 🇭🇰 中国香港 (Hong Kong) 14 - xiaohe
   - 🇭🇰 中国香港 (Hong Kong) 15 - xiaohe
   - 🇭🇰 中国香港 (Hong Kong) 16 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 17 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 18 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 19 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 20 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 21 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 22 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 23 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 24 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 25 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 26 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 27 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 28 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 29 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 30 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 31 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 32 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 33 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 34 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 35 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 36 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 37 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 38 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 39 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 40 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 41 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 42 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 43 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 44 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 45 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 46 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 47 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -211,5 +464,36 @@ proxy-groups:
   - 🇭🇰 中国香港 (Hong Kong) 14 - xiaohe
   - 🇭🇰 中国香港 (Hong Kong) 15 - xiaohe
   - 🇭🇰 中国香港 (Hong Kong) 16 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 17 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 18 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 19 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 20 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 21 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 22 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 23 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 24 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 25 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 26 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 27 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 28 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 29 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 30 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 31 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 32 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 33 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 34 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 35 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 36 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 37 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 38 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 39 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 40 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 41 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 42 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 43 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 44 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 45 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 46 - xiaohe
+  - 🇭🇰 中国香港 (Hong Kong) 47 - xiaohe
 rules:
 - MATCH,PROXIES

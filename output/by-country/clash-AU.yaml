@@ -5,6 +5,13 @@ mode: rule
 log-level: info
 proxies:
 - name: 🇦🇺 澳大利亚 (Australia) 01 - xiaohe
+  type: ss
+  server: catnet-other.kunlun04dns.com
+  port: 28047
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇦🇺 澳大利亚 (Australia) 02 - xiaohe
   type: vless
   server: 103.75.119.126
   port: 2087
@@ -17,20 +24,33 @@ proxies:
     path: /7586c69d3dc9
     headers:
       Host: 103.75.119.126
-- name: 🇦🇺 澳大利亚 (Australia) 02 - xiaohe
-  type: ss
-  server: catnet-other.kunlun04dns.com
-  port: 28047
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
 - name: 🇦🇺 澳大利亚 (Australia) 03 - xiaohe
+  type: vless
+  server: 103.75.119.126
+  port: 2087
+  uuid: 731f177e-00aa-480c-b935-661456139a32
+  udp: true
+  tls: false
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /7586c69d3dc9
+    headers:
+      Host: 103.75.119.126
+- name: 🇦🇺 澳大利亚 (Australia) 04 - xiaohe
   type: ss
   server: catnet-other.kunlun04dns.com
   port: 28048
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
+- name: 🇦🇺 澳大利亚 (Australia) 05 - xiaohe
+  type: hysteria2
+  server: vpn-au-002.fastervpn.world
+  port: 443
+  password: H7mP2xY9kJ4nQ8wR5tF6vB3z
+  udp: true
+  skip-cert-verify: true
 proxy-groups:
 - name: PROXIES
   type: select
@@ -39,6 +59,8 @@ proxy-groups:
   - 🇦🇺 澳大利亚 (Australia) 01 - xiaohe
   - 🇦🇺 澳大利亚 (Australia) 02 - xiaohe
   - 🇦🇺 澳大利亚 (Australia) 03 - xiaohe
+  - 🇦🇺 澳大利亚 (Australia) 04 - xiaohe
+  - 🇦🇺 澳大利亚 (Australia) 05 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -47,5 +69,7 @@ proxy-groups:
   - 🇦🇺 澳大利亚 (Australia) 01 - xiaohe
   - 🇦🇺 澳大利亚 (Australia) 02 - xiaohe
   - 🇦🇺 澳大利亚 (Australia) 03 - xiaohe
+  - 🇦🇺 澳大利亚 (Australia) 04 - xiaohe
+  - 🇦🇺 澳大利亚 (Australia) 05 - xiaohe
 rules:
 - MATCH,PROXIES
