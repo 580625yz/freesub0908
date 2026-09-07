@@ -7,7 +7,7 @@ proxies:
 - name: 🇹🇼 中国台湾 (Taiwan) 01 - xiaohe
   type: ss
   server: catnet-tw.kunlun04dns.com
-  port: 28031
+  port: 28032
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
@@ -21,25 +21,11 @@ proxies:
 - name: 🇹🇼 中国台湾 (Taiwan) 03 - xiaohe
   type: ss
   server: catnet-tw.kunlun04dns.com
-  port: 28032
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇹🇼 中国台湾 (Taiwan) 04 - xiaohe
-  type: ss
-  server: catnet-tw.kunlun04dns.com
   port: 28033
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
-- name: 🇹🇼 中国台湾 (Taiwan) 05 - xiaohe
-  type: ss
-  server: catnet-tw.kunlun04dns.com
-  port: 28030
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇹🇼 中国台湾 (Taiwan) 06 - xiaohe
+- name: 🇹🇼 中国台湾 (Taiwan) 04 - xiaohe
   type: ss
   server: catnet-tw.kunlun04dns.com
   port: 28029
@@ -55,8 +41,6 @@ proxy-groups:
   - 🇹🇼 中国台湾 (Taiwan) 02 - xiaohe
   - 🇹🇼 中国台湾 (Taiwan) 03 - xiaohe
   - 🇹🇼 中国台湾 (Taiwan) 04 - xiaohe
-  - 🇹🇼 中国台湾 (Taiwan) 05 - xiaohe
-  - 🇹🇼 中国台湾 (Taiwan) 06 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -66,7 +50,5 @@ proxy-groups:
   - 🇹🇼 中国台湾 (Taiwan) 02 - xiaohe
   - 🇹🇼 中国台湾 (Taiwan) 03 - xiaohe
   - 🇹🇼 中国台湾 (Taiwan) 04 - xiaohe
-  - 🇹🇼 中国台湾 (Taiwan) 05 - xiaohe
-  - 🇹🇼 中国台湾 (Taiwan) 06 - xiaohe
 rules:
 - MATCH,PROXIES

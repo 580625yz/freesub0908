@@ -6,27 +6,6 @@ log-level: info
 proxies:
 - name: 🇯🇵 日本 (Japan) 01 - xiaohe
   type: vless
-  server: 172.67.156.147
-  port: 443
-  uuid: 4e4f1f70-5e56-4a76-bb9d-db087f4690c4
-  udp: true
-  tls: true
-  skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /tyxyws
-    headers:
-      Host: jp3.yohototo.top
-- name: 🇯🇵 日本 (Japan) 02 - xiaohe
-  type: vless
-  server: 38.175.203.11
-  port: 443
-  uuid: 1b8ec962-6e6f-4fc3-a9a4-c8a6fc907796
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇯🇵 日本 (Japan) 03 - xiaohe
-  type: vless
   server: 130.12.102.62
   port: 443
   uuid: 6429d27e-a7d4-4e04-ae57-e88243fbbfe3
@@ -37,7 +16,20 @@ proxies:
     public-key: F2VfBr2UmjDTErB_oruvW5aIvzH_xGfM2AW5_w-DF0I
   servername: localhost
   client-fingerprint: chrome
-- name: 🇯🇵 日本 (Japan) 04 - xiaohe
+- name: 🇯🇵 日本 (Japan) 02 - xiaohe
+  type: vless
+  server: 162.159.254.3
+  port: 443
+  uuid: 4e4f1f70-5e56-4a76-bb9d-db087f4690c4
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /tyxyws
+    headers:
+      Host: jp3.yohototo.top
+- name: 🇯🇵 日本 (Japan) 03 - xiaohe
   type: vmess
   server: 155.248.176.44
   port: 55216
@@ -47,14 +39,80 @@ proxies:
   udp: true
   tls: false
   skip-cert-verify: true
+- name: 🇯🇵 日本 (Japan) 04 - xiaohe
+  type: ss
+  server: catnet-jp.kunlun04dns.com
+  port: 28016
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
 - name: 🇯🇵 日本 (Japan) 05 - xiaohe
+  type: vmess
+  server: 172.111.146.64
+  port: 80
+  uuid: 05b8c783-7f59-47f9-9923-06a465679f6a
+  alterId: 0
+  cipher: auto
+  udp: true
+  tls: false
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /vmess/
+    headers:
+      Host: ''
+- name: 🇯🇵 日本 (Japan) 06 - xiaohe
+  type: ss
+  server: catnet-jp.kunlun04dns.com
+  port: 28015
+  cipher: aes-128-gcm
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  udp: true
+- name: 🇯🇵 日本 (Japan) 07 - xiaohe
   type: ss
   server: catnet-jp.kunlun04dns.com
   port: 28012
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
-- name: 🇯🇵 日本 (Japan) 06 - xiaohe
+- name: 🇯🇵 日本 (Japan) 08 - xiaohe
+  type: ss
+  server: 64.83.33.45
+  port: 443
+  cipher: aes-256-gcm
+  password: AyqX8KynyyQLReOZorQRQbsvmiwxBQOf
+  udp: true
+- name: 🇯🇵 日本 (Japan) 09 - xiaohe
+  type: ss
+  server: 149.22.87.204
+  port: 443
+  cipher: aes-128-gcm
+  password: shadowsocks
+  udp: true
+- name: 🇯🇵 日本 (Japan) 10 - xiaohe
+  type: vless
+  server: 137.220.221.179
+  port: 443
+  uuid: a16a3336-c9ab-489f-9b85-c973f5e2cfa4
+  udp: true
+  tls: false
+  skip-cert-verify: true
+- name: 🇯🇵 日本 (Japan) 11 - xiaohe
+  type: ss
+  server: 149.22.87.241
+  port: 443
+  cipher: aes-128-gcm
+  password: shadowsocks
+  udp: true
+- name: 🇯🇵 日本 (Japan) 12 - xiaohe
+  type: vless
+  server: 14.137.238.193
+  port: 10000
+  uuid: 8b92dfff-ddfd-4a37-841d-6f7bf7ab43b6
+  udp: true
+  tls: false
+  skip-cert-verify: true
+- name: 🇯🇵 日本 (Japan) 13 - xiaohe
   type: vmess
   server: 45.32.57.118
   port: 4433
@@ -64,100 +122,48 @@ proxies:
   udp: true
   tls: false
   skip-cert-verify: true
-- name: 🇯🇵 日本 (Japan) 07 - xiaohe
-  type: vless
-  server: 137.220.221.179
-  port: 443
-  uuid: a16a3336-c9ab-489f-9b85-c973f5e2cfa4
-  udp: true
-  tls: false
-  skip-cert-verify: true
-- name: 🇯🇵 日本 (Japan) 08 - xiaohe
-  type: trojan
-  server: aa.ccmusic.jp
-  port: 443
-  password: tsuchiya
-  udp: true
-  sni: aa.ccmusic.jp
-  skip-cert-verify: true
-- name: 🇯🇵 日本 (Japan) 09 - xiaohe
-  type: trojan
-  server: 185.200.65.251
-  port: 443
-  password: UQfj7bdfjibTjpUHfg72aew51S7fB32g
-  udp: true
-  sni: portal.buildtunnel.com
-  skip-cert-verify: true
-- name: 🇯🇵 日本 (Japan) 10 - xiaohe
-  type: vless
-  server: 14.137.238.193
-  port: 10000
-  uuid: 8b92dfff-ddfd-4a37-841d-6f7bf7ab43b6
-  udp: true
-  tls: false
-  skip-cert-verify: true
-- name: 🇯🇵 日本 (Japan) 11 - xiaohe
-  type: ss
-  server: catnet-jp.kunlun04dns.com
-  port: 28016
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇯🇵 日本 (Japan) 12 - xiaohe
-  type: ss
-  server: catnet-jp.kunlun04dns.com
-  port: 28013
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
-  udp: true
-- name: 🇯🇵 日本 (Japan) 13 - xiaohe
-  type: ss
-  server: 149.22.87.241
-  port: 443
-  cipher: aes-128-gcm
-  password: shadowsocks
-  udp: true
 - name: 🇯🇵 日本 (Japan) 14 - xiaohe
   type: ss
-  server: 149.22.87.204
-  port: 443
+  server: catnet-jp.kunlun04dns.com
+  port: 28014
   cipher: aes-128-gcm
-  password: shadowsocks
+  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
 - name: 🇯🇵 日本 (Japan) 15 - xiaohe
-  type: ss
-  server: 149.22.87.240
+  type: vless
+  server: 38.175.203.11
   port: 443
-  cipher: aes-128-gcm
-  password: shadowsocks
+  uuid: 1b8ec962-6e6f-4fc3-a9a4-c8a6fc907796
   udp: true
+  tls: true
+  skip-cert-verify: true
 - name: 🇯🇵 日本 (Japan) 16 - xiaohe
-  type: ss
-  server: 64.83.33.45
-  port: 443
-  cipher: aes-256-gcm
-  password: AyqX8KynyyQLReOZorQRQbsvmiwxBQOf
-  udp: true
-- name: 🇯🇵 日本 (Japan) 17 - xiaohe
   type: ss
   server: catnet-jp.kunlun04dns.com
   port: 28011
   cipher: aes-128-gcm
   password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
   udp: true
+- name: 🇯🇵 日本 (Japan) 17 - xiaohe
+  type: ss
+  server: 84.247.155.196
+  port: 80
+  cipher: aes-256-gcm
+  password: 3eOFeNssde7PYYMv
+  udp: true
 - name: 🇯🇵 日本 (Japan) 18 - xiaohe
   type: ss
-  server: catnet-jp.kunlun04dns.com
-  port: 28015
-  cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  server: 84.247.155.196
+  port: 443
+  cipher: aes-256-gcm
+  password: 3eOFeNssde7PYYMv
   udp: true
 - name: 🇯🇵 日本 (Japan) 19 - xiaohe
   type: ss
-  server: catnet-jp.kunlun04dns.com
-  port: 28014
+  server: 149.22.87.240
+  port: 443
   cipher: aes-128-gcm
-  password: b61ca706-e2e9-4f6b-bd1e-0f0534a2fc41
+  password: shadowsocks
   udp: true
 proxy-groups:
 - name: PROXIES
