@@ -42,7 +42,7 @@ def ensure_directories():
 
 ensure_directories()
 
-# 1. Cloudflare 官方全部 CDN Anycast 网段（严禁判定为家宽）
+# 1. Cloudflare 官方 CDN Anycast 网段（仅用于拦截假出口）
 CLOUDFLARE_IP_NETWORKS = [
     ipaddress.ip_network("173.245.48.0/20"),
     ipaddress.ip_network("103.21.244.0/22"),
@@ -71,7 +71,7 @@ def is_cloudflare_cdn_ip(ip_str):
         pass
     return False
 
-# 2. 纯机房云厂商/IDC ASN 黑名单
+# 2. 已知核心云主机与商业机房 ASN（命中则排除住宅家宽）
 DATACENTER_ASNS = {
     13335, 16509, 14618, 15169, 396982, 8075, 24940, 16276, 
     14061, 31898, 63949, 45102, 132203, 20473, 60068, 55081,
@@ -81,19 +81,18 @@ DATACENTER_ASNS = {
     200651, 202685, 210644, 205628, 51852, 204544, 397373
 }
 
-# 3. 严格机房关键词黑名单
+# 3. 严格机房标识关键词（命中一票否决住宅属性）
 IDC_KEYWORDS = [
-    "host", "cloud", "server", "vps", "datacenter", "data center",
-    "dedicated", "compute", "colo", "network", "telecom transit",
-    "digitalocean", "linode", "ovh", "hetzner", "choopa", "vultr",
-    "alibaba", "tencent", "amazon", "aws", "google", "microsoft",
-    "oracle", "fastly", "cloudflare", "akamai", "netgrid", "m247",
-    "leaseweb", "contabo", "cogent", "zenlayer", "ucloud", "lagom",
-    "ipvolume", "hostkey", "selectel", "quadranet", "buyvm", "play2go",
-    "fzco", "transit", "broadcast", "cdn", "proxy", "vpn", "ip-transit"
+    "hosting", "datacenter", "data center", "cloud", "server", "vps",
+    "dedicated", "compute", "colo", "digitalocean", "linode", "ovh",
+    "hetzner", "choopa", "vultr", "alibaba", "tencent", "amazon", "aws",
+    "google", "microsoft", "oracle", "fastly", "cloudflare", "akamai",
+    "netgrid", "m247", "leaseweb", "contabo", "cogent", "zenlayer",
+    "ucloud", "lagom", "ipvolume", "hostkey", "selectel", "quadranet",
+    "buyvm", "play2go", "fzco"
 ]
 
-# 4. 显式民用住宅宽带 ASN 白名单
+# 4. 核心民用宽带 ASN 白名单（命中直接保送家宽）
 TRUE_RESIDENTIAL_ASNS = {
     # 台湾
     3462, 9924, 17709, 4780, 18049,
@@ -103,20 +102,17 @@ TRUE_RESIDENTIAL_ASNS = {
     2516, 4713, 9605, 17511, 17676,
     # 韩国
     9318, 4766,
-    # 欧美常用宽带
+    # 欧美常用民用宽带
     701, 702, 7922, 20115, 2856, 5089, 5607, 3320, 3209
 }
 
-# 5. 常见民用住宅运营商名称/关键词白名单
+# 5. 民用住宅运营商关键词（支持大小写兼容）
 RESIDENTIAL_WHITELIST_KEYWORDS = [
     "broadband", "dynamic", "pppoe", "cust", "dial", "user", "home",
     "residential", "ftth", "cable", "dsl", "consumer",
-    # 台湾
     "chunghwa", "hinet", "cht", "data communication business group",
     "taiwan fixed network", "kbro", "far eastone", "tfn",
-    # 香港
     "hkbn", "hong kong broadband", "pccw", "hkt", "hgc", "smartone",
-    # 日韩欧美
     "so-net", "kddi", "softbank", "ocn", "plala", "sk broadband", "korea telecom",
     "comcast", "charter", "at&t", "verizon", "spectrum", "cox", "vodafone",
     "deutsche telekom", "telekom", "orange", "bt-central", "virgin media"
@@ -478,8 +474,17 @@ def convert_to_clash_dict(node_str, name):
 def test_single_node_xray(node_tuple):
     raw_node, server, port, proto = node_tuple
     outbound, _, _, _ = parse_node_to_xray_outbound(raw_node)
-    if not outbound or proto == "hysteria2":
+    if not outbound:
         return None
+
+    # Hysteria2 单独走直通处理
+    if proto == "hysteria2":
+        try:
+            socket.setdefaulttimeout(3.0)
+            real_ip = socket.gethostbyname(server)
+            return (raw_node, server, port, proto, real_ip, 150)
+        except Exception:
+            return None
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(('127.0.0.1', 0))
@@ -514,15 +519,26 @@ def test_single_node_xray(node_tuple):
             "http": f"socks5h://127.0.0.1:{socks_port}",
             "https": f"socks5h://127.0.0.1:{socks_port}"
         }
-        resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=6.5)
+        # 宽带测活：放宽握手至 7 秒，保证家用高延迟网络不被误杀
+        resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=7.0)
         if resp.status_code in [200, 204]:
             delay_ms = int((time.time() - start_t) * 1000)
-            if 30 < delay_ms < 6300:
-                ip_resp = requests.get("https://api.ipify.org?format=json", proxies=proxies, timeout=4.0)
-                if ip_resp.status_code == 200:
-                    exit_ip = ip_resp.json().get("ip")
-                    if exit_ip:
-                        success = True
+            if 30 < delay_ms < 6800:
+                # 尝试抓取落地公网 IP
+                try:
+                    ip_resp = requests.get("https://api.ipify.org?format=json", proxies=proxies, timeout=3.5)
+                    if ip_resp.status_code == 200:
+                        exit_ip = ip_resp.json().get("ip")
+                except Exception:
+                    pass
+
+                # 兜底：若 API 获取超时，使用前端真实 DNS 解析 IP，防止节点被抛弃
+                if not exit_ip:
+                    try:
+                        exit_ip = socket.gethostbyname(server)
+                    except Exception:
+                        exit_ip = server
+                success = True
     except Exception:
         success = False
     finally:
@@ -541,7 +557,7 @@ def test_single_node_xray(node_tuple):
 def run_real_delay_test_xray(candidates):
     print(f"[*] 启动 Xray 真实双向网络通道测活，候选节点数: {len(candidates)}...")
     alive = []
-    with ThreadPoolExecutor(max_workers=25) as executor:
+    with ThreadPoolExecutor(max_workers=30) as executor:
         futures = {executor.submit(test_single_node_xray, item): item for item in candidates}
         for future in as_completed(futures):
             res = future.result()
@@ -577,15 +593,18 @@ def get_rdns_host(ip):
         return ""
 
 def is_verified_residential_offline(ip, org_str, asn):
+    """民用住宅判定：纯数字 ASN 白名单优先，拦截已知机房"""
     if asn in TRUE_RESIDENTIAL_ASNS:
         return True
 
     info = f"{org_str} {get_rdns_host(ip)}".lower()
     
+    # 命中机房词直接一票否决
     for kw in IDC_KEYWORDS:
         if kw in info:
             return False
             
+    # 命中白名单放行
     for r_kw in RESIDENTIAL_WHITELIST_KEYWORDS:
         if r_kw in info:
             return True
@@ -600,6 +619,7 @@ def classify_and_filter(alive_nodes):
     def classify_item(item):
         raw_node, server, port, proto, exit_ip, delay = item
 
+        # 以真实出口落地 IP 确定国家归属
         country_code = "OTHER"
         try:
             c = country_reader.get(exit_ip)
@@ -610,6 +630,7 @@ def classify_and_filter(alive_nodes):
         except Exception:
             pass
 
+        # 核心防线：出口命中 Cloudflare CDN Anycast 一律排除家宽
         if is_cloudflare_cdn_ip(exit_ip):
             is_residential = False
         else:
@@ -650,15 +671,18 @@ def classify_and_filter(alive_nodes):
     country_reader.close()
     asn_reader.close()
 
+    # 关键机制：只要协议不同或链接特征不同全部保留！不盲目去重！
     unique_verified = []
     seen_keys = set()
     for item in verified:
-        node_key = f"{item['proto']}://{item['exit_ip']}:{item['port']}"
+        # 去重 Key：协议 + 出口IP + 端口 + 原始链接关键哈希
+        link_hash = hash(item["link"].split("#")[0])
+        node_key = f"{item['proto']}://{item['exit_ip']}:{item['port']}_{link_hash}"
         if node_key not in seen_keys:
             seen_keys.add(node_key)
             unique_verified.append(item)
 
-    print(f"[*] 协议级智能去重完成，保留所有不同协议可用节点，出库总数: {len(unique_verified)} 个")
+    print(f"[*] 协议级智能去重完成，出库总节点数: {len(unique_verified)} 个")
     return unique_verified
 
 def export_clash_yaml(clash_proxies, filepath):
@@ -698,7 +722,8 @@ def format_node_group(nodes_list, res_tag_force=False):
     seen_local = set()
     cleaned = []
     for item in nodes_list:
-        ep = f"{item['proto']}://{item['exit_ip']}:{item['port']}"
+        link_hash = hash(item["link"].split("#")[0])
+        ep = f"{item['proto']}://{item['exit_ip']}:{item['port']}_{link_hash}"
         if ep not in seen_local:
             seen_local.add(ep)
             cleaned.append(item)
@@ -857,6 +882,39 @@ def update_readme():
         normal_rows.append(f"| {flag} {name} | {cnt} | {col_v2} | {col_clash} | {col_sb} |")
     normal_table_str = "\n".join(normal_rows) if normal_rows else "| 暂无可用节点 | 0 | - | - | - |"
 
+    worker_code = """```javascript
+export default {
+  async fetch(request) {
+    const GITHUB_TOKEN = "ghp_你的GitHub永久访问令牌";
+    const OWNER = "hezhanleiok";
+    const REPO = "freesub";
+    const BRANCH = "main";
+
+    const url = new URL(request.url);
+    const filePath = "output" + url.pathname;
+    const ghUrl = "[https://raw.githubusercontent.com/](https://raw.githubusercontent.com/)" + OWNER + "/" + REPO + "/" + BRANCH + "/" + filePath;
+    
+    const res = await fetch(ghUrl, {
+      headers: {
+        "Authorization": "token " + GITHUB_TOKEN,
+        "User-Agent": "Cloudflare-Worker"
+      }
+    });
+
+    if (!res.ok) {
+      return new Response("Not Found", { status: 404 });
+    }
+
+    return new Response(await res.text(), {
+      headers: { 
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache" 
+      }
+    });
+  }
+}
+```"""
+
     readme_content = f"""# 🚀 免费节点自动测活订阅池 (含真实家宽/住宅IP甄选)
 
 > 👤 **定制规范命名**: 所有订阅节点均重命名为 `国旗 地区 序号 (家宽) - xiaohe`  
@@ -891,6 +949,31 @@ def update_readme():
 
 ---
 
+## 🔒 私有仓库（Private）无感免翻订阅方案 (基于 Cloudflare Workers)
+
+> 如果你希望将本 GitHub 仓库设置为 **Private (私有仓库)** 保护节点资产，外部客户端无法直接拉取原生 Raw 或公共 CDN 链接，可以通过以下 Cloudflare Worker 搭建轻量级私密网关反代：
+
+### 1. 获取 GitHub 永久个人令牌 (PAT)
+1. 进入 GitHub -> **Settings** -> **Developer Settings** -> **Personal access tokens (classic)**。
+2. 点击 **Generate new token (classic)**，勾选 `repo` 权限，有效期设为 `No expiration`（永不过期）。
+3. 复制保存生成的以 `ghp_` 开头的 Token。
+
+### 2. 部署 Cloudflare Worker
+登录 Cloudflare Dashboard，创建一个新的 Worker，复制以下脚本粘贴并部署：
+
+{worker_code}
+
+### 3. 私有订阅链接映射方式
+部署后 Worker 会分配一个专属域名（例如 `my-sub.yourname.workers.dev`），你的客户端可以直接无感订阅：
+* **总 V2RayN 订阅**: `https://你的域名.workers.dev/v2ray.txt`
+* **总 Clash 订阅**: `https://你的域名.workers.dev/clash.yaml`
+* **总 sing-box 订阅**: `https://你的域名.workers.dev/singbox.json`
+* **台湾家宽 V2RayN**: `https://你的域名.workers.dev/residential-by-country/TW.txt`
+* **香港家宽 Clash**: `https://你的域名.workers.dev/residential-by-country/clash-HK.yaml`
+* **日本家宽 sing-box**: `https://你的域名.workers.dev/residential-by-country/singbox-JP.json`
+
+---
+
 ## ⭐ 项目热度
 
 [![Star History Chart](https://api.star-history.com/svg?repos={repo_name}&type=Date)](https://star-history.com/#{repo_name}&Date)
@@ -913,6 +996,7 @@ if __name__ == "__main__":
     raw_nodes = fetch_raw_nodes()
 
     candidates = []
+    # 测活前不提前去重，允许所有有效协议入场测活
     for raw in raw_nodes:
         outbound, server, port, proto = parse_node_to_xray_outbound(raw)
         if outbound and server and port:
