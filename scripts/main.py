@@ -93,7 +93,7 @@ IDC_KEYWORDS = [
     "fzco", "transit", "broadcast", "cdn", "proxy", "vpn", "ip-transit"
 ]
 
-# 4. 显式民用住宅宽带 ASN 白名单（命中直接保送家宽）
+# 4. 显式民用住宅宽带 ASN 白名单
 TRUE_RESIDENTIAL_ASNS = {
     # 台湾
     3462, 9924, 17709, 4780, 18049,
@@ -107,7 +107,7 @@ TRUE_RESIDENTIAL_ASNS = {
     701, 702, 7922, 20115, 2856, 5089, 5607, 3320, 3209
 }
 
-# 5. 常见民用住宅运营商名称/关键词白名单（大幅扩充港台真实识别词）
+# 5. 常见民用住宅运营商名称/关键词白名单
 RESIDENTIAL_WHITELIST_KEYWORDS = [
     "broadband", "dynamic", "pppoe", "cust", "dial", "user", "home",
     "residential", "ftth", "cable", "dsl", "consumer",
@@ -514,7 +514,6 @@ def test_single_node_xray(node_tuple):
             "http": f"socks5h://127.0.0.1:{socks_port}",
             "https": f"socks5h://127.0.0.1:{socks_port}"
         }
-        # 宽带握手放宽至 6.5s
         resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=6.5)
         if resp.status_code in [200, 204]:
             delay_ms = int((time.time() - start_t) * 1000)
@@ -578,18 +577,15 @@ def get_rdns_host(ip):
         return ""
 
 def is_verified_residential_offline(ip, org_str, asn):
-    """民用住宅判定：白名单优先，拦截已知机房"""
     if asn in TRUE_RESIDENTIAL_ASNS:
         return True
 
     info = f"{org_str} {get_rdns_host(ip)}".lower()
     
-    # 命中机房词一票否决
     for kw in IDC_KEYWORDS:
         if kw in info:
             return False
             
-    # 命中白名单放行
     for r_kw in RESIDENTIAL_WHITELIST_KEYWORDS:
         if r_kw in info:
             return True
@@ -604,7 +600,6 @@ def classify_and_filter(alive_nodes):
     def classify_item(item):
         raw_node, server, port, proto, exit_ip, delay = item
 
-        # 以真实出口落地 IP 确定国家归属
         country_code = "OTHER"
         try:
             c = country_reader.get(exit_ip)
@@ -615,7 +610,6 @@ def classify_and_filter(alive_nodes):
         except Exception:
             pass
 
-        # 核心防线：出口命中 Cloudflare CDN Anycast 一律排除家宽
         if is_cloudflare_cdn_ip(exit_ip):
             is_residential = False
         else:
@@ -656,11 +650,9 @@ def classify_and_filter(alive_nodes):
     country_reader.close()
     asn_reader.close()
 
-    # 关键修复：协议不同不杀！只要协议不同或参数不同均完整保留展示！
     unique_verified = []
     seen_keys = set()
     for item in verified:
-        # 去重 key 包含协议名，确保同端口的不同协议节点（SS、VLESS、Trojan 等）全部保留！
         node_key = f"{item['proto']}://{item['exit_ip']}:{item['port']}"
         if node_key not in seen_keys:
             seen_keys.add(node_key)
@@ -906,11 +898,11 @@ def update_readme():
 ---
 
 ## 🛠️ 项目使用说明
-1. **自动更新机制**：GitHub Actions 每 6 小时全自动运行并刷新上述全部订阅与数据[cite: 4]。
+1. **自动更新机制**：GitHub Actions 每 6 小时全自动运行并刷新上述全部订阅与数据。
 2. **多客户端兼容**：
-   - **Clash / Clash Verge / Mihomo Party**：直接复制上方表格中的 **Clash 专属订阅** 链接[cite: 4]。
-   - **v2rayN / v2rayNG**：直接复制上方表格中的 **V2RayN 专属订阅** 链接[cite: 4]。
-   - **sing-box**：直接使用上方 **sing-box 专属订阅** 链接[cite: 4]。
+   - **Clash / Clash Verge / Mihomo Party**：直接复制上方表格中的 **Clash 专属订阅** 链接。
+   - **v2rayN / v2rayNG**：直接复制上方表格中的 **V2RayN 专属订阅** 链接。
+   - **sing-box**：直接使用上方 **sing-box 专属订阅** 链接。
 """
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_content)
@@ -921,7 +913,6 @@ if __name__ == "__main__":
     raw_nodes = fetch_raw_nodes()
 
     candidates = []
-    # 测活前不提前去重，允许所有有效协议入场测活
     for raw in raw_nodes:
         outbound, server, port, proto = parse_node_to_xray_outbound(raw)
         if outbound and server and port:
