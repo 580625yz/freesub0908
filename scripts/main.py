@@ -69,16 +69,17 @@ def is_cloudflare_cdn_ip(ip_str):
         pass
     return False
 
-# 2. 常见数据中心/服务器云厂商 ASN 黑名单
+# 2. 严苛的数据中心/机房 ASN 黑名单
 DATACENTER_ASNS = {
     13335, 16509, 14618, 15169, 396982, 8075, 24940, 16276, 
     14061, 31898, 63949, 45102, 132203, 20473, 60068, 55081,
     197540, 51167, 8560, 42708, 201814, 49981, 212238, 46652,
     141995, 200019, 136907, 39351, 9009, 174, 3356, 1299, 2914,
-    199180, 202051, 62240, 49304, 34665, 209242
+    199180, 202051, 62240, 49304, 34665, 209242, 219337, 44477,
+    200651, 202685, 210644, 205628, 51852, 204544, 397373
 }
 
-# 3. 机房/主机提供商关键词黑名单（命中即判定为 IDC）
+# 3. IDC/机房/主机商关键词黑名单（命中一票否决）
 IDC_KEYWORDS = [
     "host", "cloud", "server", "vps", "datacenter", "data center",
     "dedicated", "compute", "colo", "network", "telecom transit",
@@ -86,16 +87,18 @@ IDC_KEYWORDS = [
     "alibaba", "tencent", "amazon", "aws", "google", "microsoft",
     "oracle", "fastly", "cloudflare", "akamai", "netgrid", "m247",
     "leaseweb", "contabo", "cogent", "zenlayer", "ucloud", "lagom",
-    "ipvolume", "hostkey", "selectel", "quadranet", "buyvm"
+    "ipvolume", "hostkey", "selectel", "quadranet", "buyvm", "play2go",
+    "fzco", "transit", "broadcast", "cdn", "proxy", "vpn", "ip-transit"
 ]
 
-# 4. 显式民用住宅/宽带运营商关键词白名单
+# 4. 显式民用住宅宽带白名单关键词（优先识别原生家宽）
 RESIDENTIAL_WHITELIST_KEYWORDS = [
     "broadband", "dynamic", "pppoe", "cust", "dial", "user", "home",
     "residential", "ftth", "cable", "dsl", "consumer", "chunghwa", "hinet",
     "kbro", "pccw", "hkbn", "so-net", "kddi", "softbank", "ocn", "plala",
     "comcast", "charter", "at&t", "verizon", "spectrum", "cox", "vodafone",
-    "deutsche telekom", "telekom", "orange", "bt-central", "virgin media"
+    "deutsche telekom", "telekom", "orange", "bt-central", "virgin media",
+    "singtel", "starhub", "myrepublic", "hgc", "smartone"
 ]
 
 COUNTRY_NAMES = {
@@ -183,7 +186,7 @@ def extract_nodes_from_text(text):
 def fetch_raw_nodes():
     nodes = set()
     headers = {"User-Agent": "Mozilla/5.0"}
-    print("[*] 正在抓取节点池...")
+    print("[*] 正在抓取全部可用节点池...")
     for url in SOURCE_URLS:
         try:
             resp = requests.get(url, headers=headers, timeout=20)
@@ -195,18 +198,8 @@ def fetch_raw_nodes():
     print(f"[*] 初始去重总量: {len(nodes)} 个")
     return list(nodes)
 
-def resolve_host_cached(host, cache={}):
-    if host in cache:
-        return cache[host]
-    try:
-        socket.setdefaulttimeout(1.5)
-        ip = socket.gethostbyname(host)
-        cache[host] = ip
-        return ip
-    except Exception:
-        return None
-
 def parse_node_to_xray_outbound(node_str):
+    """转换配置并过滤高危不耐阻断的明文节点"""
     try:
         if node_str.startswith("vless://"):
             m = re.search(r"vless://([^@]+)@([^:]+):(\d+)\??(.*)", node_str)
@@ -414,7 +407,7 @@ def convert_to_clash_dict(node_str, name):
     return None
 
 def test_single_node_xray(node_tuple):
-    raw_node, server, port, in_ip = node_tuple
+    raw_node, server, port = node_tuple
     outbound, _, _ = parse_node_to_xray_outbound(raw_node)
     if not outbound:
         return None
@@ -452,13 +445,13 @@ def test_single_node_xray(node_tuple):
             "http": f"socks5h://127.0.0.1:{socks_port}",
             "https": f"socks5h://127.0.0.1:{socks_port}"
         }
-        # 1. 真实 HTTPS 双向加密握手
-        resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=4.5)
+        # 1. 宽带友好型真连接握手：超时放宽至 6.5s，避免家宽因网络延迟被误判为死节点
+        resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=6.5)
         if resp.status_code in [200, 204]:
             delay_ms = int((time.time() - start_t) * 1000)
-            if 30 < delay_ms < 4500:
-                # 2. 获取真实出口落地 IP (解决中转出口国别漂移问题)
-                ip_resp = requests.get("https://api.ipify.org?format=json", proxies=proxies, timeout=3.5)
+            if 30 < delay_ms < 6200:
+                # 2. 实际穿透：抓取真实外网出口落地 IP，彻底解决国别漂移问题
+                ip_resp = requests.get("https://api.ipify.org?format=json", proxies=proxies, timeout=4.0)
                 if ip_resp.status_code == 200:
                     exit_ip = ip_resp.json().get("ip")
                     if exit_ip:
@@ -475,20 +468,21 @@ def test_single_node_xray(node_tuple):
             pass
 
     if success and exit_ip:
-        return (raw_node, server, port, in_ip, exit_ip, delay_ms)
+        return (raw_node, server, port, exit_ip, delay_ms)
     return None
 
 def run_real_delay_test_xray(candidates):
-    print(f"[*] 启动 Xray 真实双向 HTTPS 抗阻断测活，物理独立候选节点: {len(candidates)}...")
+    print(f"[*] 启动 Xray 真实双向网络通道测活，候选节点数: {len(candidates)}...")
     alive = []
-    with ThreadPoolExecutor(max_workers=30) as executor:
+    # 25 并发兼顾网络稳定与机器负荷
+    with ThreadPoolExecutor(max_workers=25) as executor:
         futures = {executor.submit(test_single_node_xray, item): item for item in candidates}
         for future in as_completed(futures):
             res = future.result()
             if res:
                 alive.append(res)
                 if len(alive) % 20 == 0:
-                    print(f"[+] 当前已核验真实落地通畅节点: {len(alive)} 个")
+                    print(f"[+] 当前已确认真实通畅节点: {len(alive)} 个")
     print(f"[+] 测活完成！真实可用落地节点总数: {len(alive)}")
     return alive
 
@@ -516,44 +510,25 @@ def get_rdns_host(ip):
     except Exception:
         return ""
 
-def is_verified_residential(ip, org_str):
+def is_verified_residential_offline(ip, org_str):
     """
-    终极住宅判定机制：
-    1. 任何命中机房/云厂商关键字的，一票否决
-    2. 远程调用免鉴权 ip-api.com 查询 hosting 字段
-    3. 必须命中显式民用宽带特征
+    纯本地离线高精度住宅判定引擎（不依赖任何易受限流的在线 API）
+    1. 只要命中 IDC/机房/主机商关键词（如 netgrid, play2go, lagom 等），直接一票否决
+    2. 必须命中显式民用宽带特征词
     """
     info = f"{org_str} {get_rdns_host(ip)}".lower()
     
-    # 规则 1：命中机房词，100% 判定为 IDC/机房
+    # 规则 1：命中机房词，100% 判定为 IDC 机房
     for kw in IDC_KEYWORDS:
         if kw in info:
             return False
             
-    # 规则 2：显式命中宽带运营商关键词白名单
+    # 规则 2：显式命中民用住宅运营商白名单
     for r_kw in RESIDENTIAL_WHITELIST_KEYWORDS:
         if r_kw in info:
             return True
 
-    # 规则 3：在线复核接口兜底 (ip-api.com)
-    try:
-        url = f"http://ip-api.com/json/{ip}?fields=status,isp,org,as,hosting,proxy"
-        resp = requests.get(url, timeout=3.0)
-        if resp.status_code == 200:
-            data = resp.json()
-            if data.get("status") == "success":
-                # hosting == True 必定是机房/数据中心
-                if data.get("hosting", False) or data.get("proxy", False):
-                    return False
-                api_info = f"{data.get('isp', '')} {data.get('org', '')} {data.get('as', '')}".lower()
-                for kw in IDC_KEYWORDS:
-                    if kw in api_info:
-                        return False
-                return True
-    except Exception:
-        pass
-
-    # 严控策略：无法明确确认为民用住宅宽带的，一律保守判定为非家宽
+    # 严控策略：只要不能确认为民用住宅宽带，一律保守归入非家宽
     return False
 
 def classify_and_filter(alive_nodes):
@@ -562,9 +537,9 @@ def classify_and_filter(alive_nodes):
     verified = []
 
     def classify_item(item):
-        raw_node, server, port, in_ip, exit_ip, delay = item
+        raw_node, server, port, exit_ip, delay = item
 
-        # 以真实落地出口 IP 判定国家归属
+        # 以真实出口落地 IP 严格确定国家归属
         country_code = "OTHER"
         try:
             c = country_reader.get(exit_ip)
@@ -575,8 +550,8 @@ def classify_and_filter(alive_nodes):
         except Exception:
             pass
 
-        # 核心防线 1：入口或出口命中 Cloudflare CDN 一律排除家宽
-        if is_cloudflare_cdn_ip(in_ip) or is_cloudflare_cdn_ip(exit_ip):
+        # 核心防线 1：出口命中 Cloudflare CDN Anycast 一律排除家宽
+        if is_cloudflare_cdn_ip(exit_ip):
             is_residential = False
         else:
             is_residential = False
@@ -585,9 +560,9 @@ def classify_and_filter(alive_nodes):
                 asn = a.get("autonomous_system_number", 0) if a else 0
                 org = str(a.get("autonomous_system_organization", "")).lower() if a else ""
                 
-                # 核心防线 2：排除已知数据中心 ASN
+                # 核心防线 2：排除已知数据中心 ASN，并做纯本地高精度住宅特征核验
                 if asn not in DATACENTER_ASNS:
-                    is_residential = is_verified_residential(exit_ip, org)
+                    is_residential = is_verified_residential_offline(exit_ip, org)
             except Exception:
                 pass
 
@@ -600,14 +575,13 @@ def classify_and_filter(alive_nodes):
             "clash_proxy": c_dict,
             "country": str(country_code).upper(),
             "is_residential": is_residential,
-            "server_ip": in_ip,
             "exit_ip": exit_ip,
             "port": port,
             "delay": delay
         }
 
-    print("[*] 正在解析出口国家并严格核验住宅属性（严格拦截 NetGrid、Lagom 等高风险机房）...")
-    with ThreadPoolExecutor(max_workers=25) as executor:
+    print("[*] 正在解析真实出口国家并鉴定住宅属性（严格拦截 NetGrid、Lagom、Play2Go 等机房）...")
+    with ThreadPoolExecutor(max_workers=30) as executor:
         futures = [executor.submit(classify_item, item) for item in alive_nodes]
         for f in as_completed(futures):
             res = f.result()
@@ -617,18 +591,16 @@ def classify_and_filter(alive_nodes):
     country_reader.close()
     asn_reader.close()
 
-    # 双层物理单端口去重：同一物理机/出口端口无论何种协议仅留 1 个
+    # 关键机制：测活完成后，在出库阶段以 (真实出口 IP, 端口) 进行全局单端口去重
     unique_verified = []
     seen_endpoints = set()
     for item in verified:
-        endpoint = f"{item['server_ip']}:{item['port']}"
-        exit_endpoint = f"{item['exit_ip']}:{item['port']}"
-        if endpoint not in seen_endpoints and exit_endpoint not in seen_endpoints:
+        endpoint = f"{item['exit_ip']}:{item['port']}"
+        if endpoint not in seen_endpoints:
             seen_endpoints.add(endpoint)
-            seen_endpoints.add(exit_endpoint)
             unique_verified.append(item)
 
-    print(f"[*] 全局物理单端口去重完成，最终出库独立节点数: {len(unique_verified)} 个")
+    print(f"[*] 全局物理出口单端口去重完成，最终出库独立节点数: {len(unique_verified)} 个")
     return unique_verified
 
 def export_clash_yaml(clash_proxies, filepath):
@@ -668,7 +640,7 @@ def format_node_group(nodes_list, res_tag_force=False):
     seen_local = set()
     cleaned = []
     for item in nodes_list:
-        ep = f"{item['server_ip']}:{item['port']}"
+        ep = f"{item['exit_ip']}:{item['port']}"
         if ep not in seen_local:
             seen_local.add(ep)
             cleaned.append(item)
@@ -715,7 +687,7 @@ def export_subscriptions(verified_nodes):
             p = os.path.join(OUTPUT_DIR, f)
             if os.path.exists(p): os.remove(p)
 
-    # 3. 按国家分类【非家宽】
+    # 3. 按国家分类【非家宽/机房】
     shutil.rmtree(COUNTRY_DIR, ignore_errors=True)
     os.makedirs(COUNTRY_DIR, exist_ok=True)
     by_cc = {}
@@ -783,6 +755,14 @@ def update_readme():
                 cnt = count_file(os.path.join(COUNTRY_DIR, fn))
                 if cnt > 0:
                     normal_counts[cc] = cnt
+
+    # 规范总订阅表格链接：超链接替代冗长 URL，彻底解决第一列换行挤压与横向滚动条
+    clash_cdn_url = f"https://cdn.jsdelivr.net/gh/{repo_name}@main/output/clash.yaml?v={cache_bust}"
+    clash_raw_url = f"https://raw.githubusercontent.com/{repo_name}/main/output/clash.yaml"
+    v2_cdn_url = f"https://cdn.jsdelivr.net/gh/{repo_name}@main/output/v2ray.txt?v={cache_bust}"
+    v2_raw_url = f"https://raw.githubusercontent.com/{repo_name}/main/output/v2ray.txt"
+    sb_cdn_url = f"https://cdn.jsdelivr.net/gh/{repo_name}@main/output/singbox.json?v={cache_bust}"
+    sb_raw_url = f"https://raw.githubusercontent.com/{repo_name}/main/output/singbox.json"
 
     res_rows = []
     for cc in sorted(res_counts.keys(), key=lambda x: res_counts[x], reverse=True):
@@ -862,11 +842,11 @@ export default {
 
 ## 📌 全部节点总订阅链接
 
-| 客户端 / 格式类型 | 节点总数 | 免翻 CDN 订阅直链 (国内直连) | 官方原生 Raw 直链 (开启代理) |
+| <div style="min-width:200px">客户端 / 格式类型</div> | <div style="min-width:90px">节点总数</div> | 免翻 CDN 订阅直链 (国内直连) | 官方原生 Raw 直链 (开启代理) |
 | :--- | :---: | :--- | :--- |
-| 🚀 **Clash (YAML 格式)** | `{total_count}` | `https://cdn.jsdelivr.net/gh/{repo_name}@main/output/clash.yaml?v={cache_bust}` | `https://raw.githubusercontent.com/{repo_name}/main/output/clash.yaml` |
-| ⚡ **V2RayN (Base64 格式)** | `{total_count}` | `https://cdn.jsdelivr.net/gh/{repo_name}@main/output/v2ray.txt?v={cache_bust}` | `https://raw.githubusercontent.com/{repo_name}/main/output/v2ray.txt` |
-| 📦 **sing-box (JSON 格式)** | `{total_count}` | `https://cdn.jsdelivr.net/gh/{repo_name}@main/output/singbox.json?v={cache_bust}` | `https://raw.githubusercontent.com/{repo_name}/main/output/singbox.json` |
+| 🚀 **Clash (YAML 格式)** | `{total_count}` | [🚀 免翻 CDN 直链]({clash_cdn_url}) | [🌐 官方 Raw 直链]({clash_raw_url}) |
+| ⚡ **V2RayN (Base64 格式)** | `{total_count}` | [⚡ 免翻 CDN 直链]({v2_cdn_url}) | [🌐 官方 Raw 直链]({v2_raw_url}) |
+| 📦 **sing-box (JSON 格式)** | `{total_count}` | [📦 免翻 CDN 直链]({sb_cdn_url}) | [🌐 官方 Raw 直链]({sb_raw_url}) |
 
 ---
 
@@ -934,20 +914,13 @@ if __name__ == "__main__":
     raw_nodes = fetch_raw_nodes()
 
     candidates = []
-    seen_endpoints = set()
-
-    print("[*] 正在执行底层物理 IP 强力单端口去重...")
+    # 测活前不按单端口丢弃，保留所有可能通往不同后端的节点
     for raw in raw_nodes:
         outbound, server, port = parse_node_to_xray_outbound(raw)
         if outbound and server and port:
-            ip = resolve_host_cached(server)
-            if ip:
-                ep = f"{ip}:{port}"
-                if ep not in seen_endpoints:
-                    seen_endpoints.add(ep)
-                    candidates.append((raw, server, port, ip))
+            candidates.append((raw, server, port))
 
-    print(f"[*] 物理 IP:端口 绝对去重完成，唯一候选节点数: {len(candidates)}")
+    print(f"[*] 格式合规候选节点数: {len(candidates)}")
     alive_nodes = run_real_delay_test_xray(candidates)
     verified = classify_and_filter(alive_nodes)
     export_subscriptions(verified)
