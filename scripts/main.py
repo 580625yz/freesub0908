@@ -27,7 +27,7 @@ SOURCE_URLS = [
     "https://raw.githubusercontent.com/10ium/telegram-configs-collector/main/security/tls",
     "https://github.com/Au1rxx/free-vpn-subscriptions/raw/main/output/v2ray-base64.txt",
     "https://raw.githubusercontent.com/freefq/free/master/v2",
-    "https://openproxylist.com/v2ray/rawlist/subscribe",
+    "https://open.heleimail.workers.dev/",
     "https://www.ermao.net/sub/v2ray/ermao.net",
 ]
 
@@ -71,7 +71,7 @@ def is_cloudflare_cdn_ip(ip_str):
         pass
     return False
 
-# 2. 机房 ASN 黑名单
+# 2. 纯机房云厂商/IDC ASN 黑名单
 DATACENTER_ASNS = {
     13335, 16509, 14618, 15169, 396982, 8075, 24940, 16276, 
     14061, 31898, 63949, 45102, 132203, 20473, 60068, 55081,
@@ -81,7 +81,7 @@ DATACENTER_ASNS = {
     200651, 202685, 210644, 205628, 51852, 204544, 397373
 }
 
-# 3. 机房/主机提供商关键词黑名单（命中一票否决）
+# 3. 严格机房关键词黑名单
 IDC_KEYWORDS = [
     "host", "cloud", "server", "vps", "datacenter", "data center",
     "dedicated", "compute", "colo", "network", "telecom transit",
@@ -93,39 +93,33 @@ IDC_KEYWORDS = [
     "fzco", "transit", "broadcast", "cdn", "proxy", "vpn", "ip-transit"
 ]
 
-# 4. 显式民用住宅宽带核心 ASN 白名单（绝对保留原生优质家宽）
+# 4. 显式民用住宅宽带 ASN 白名单（命中直接保送家宽）
 TRUE_RESIDENTIAL_ASNS = {
-    # 台湾核心民用 ISP
-    3462,   # Chunghwa Telecom (HiNet 中华电信)
-    9924,   # Taiwan Fixed Network (台湾固网)
-    17709,  # KBRO (中嘉宽频)
-    4780,   # Far EasTone (远传电信)
-    18049,  # TFN
-    # 香港核心民用 ISP
-    9269,   # HKBN (香港宽频)
-    3491, 4760, # PCCW / HKT (电讯盈科)
-    9304,   # HGC (和记环球电讯)
-    17816,  # Smartone
-    # 日本核心民用 ISP
-    2516, 4713, # KDDI
-    9605, 17511, # NTT / OCN
-    17676,  # Softbank BB
-    # 韩国核心民用 ISP
-    9318, 4766, # SK Broadband / Korea Telecom (KT)
-    # 美国/欧洲核心民用 ISP
-    701, 702, 7922, 20115, # Comcast / Charter / Verizon
-    2856, 5089, 5607,       # BT / Virgin Media
-    3320, 3209              # Deutsche Telekom / Vodafone
+    # 台湾
+    3462, 9924, 17709, 4780, 18049,
+    # 香港
+    9269, 3491, 4760, 9304, 17816,
+    # 日本
+    2516, 4713, 9605, 17511, 17676,
+    # 韩国
+    9318, 4766,
+    # 欧美常用宽带
+    701, 702, 7922, 20115, 2856, 5089, 5607, 3320, 3209
 }
 
-# 5. 显式民用住宅宽带白名单关键词
+# 5. 常见民用住宅运营商名称/关键词白名单（大幅扩充港台真实识别词）
 RESIDENTIAL_WHITELIST_KEYWORDS = [
     "broadband", "dynamic", "pppoe", "cust", "dial", "user", "home",
-    "residential", "ftth", "cable", "dsl", "consumer", "chunghwa", "hinet",
-    "kbro", "pccw", "hkbn", "so-net", "kddi", "softbank", "ocn", "plala",
+    "residential", "ftth", "cable", "dsl", "consumer",
+    # 台湾
+    "chunghwa", "hinet", "cht", "data communication business group",
+    "taiwan fixed network", "kbro", "far eastone", "tfn",
+    # 香港
+    "hkbn", "hong kong broadband", "pccw", "hkt", "hgc", "smartone",
+    # 日韩欧美
+    "so-net", "kddi", "softbank", "ocn", "plala", "sk broadband", "korea telecom",
     "comcast", "charter", "at&t", "verizon", "spectrum", "cox", "vodafone",
-    "deutsche telekom", "telekom", "orange", "bt-central", "virgin media",
-    "singtel", "starhub", "myrepublic", "hgc", "smartone"
+    "deutsche telekom", "telekom", "orange", "bt-central", "virgin media"
 ]
 
 COUNTRY_NAMES = {
@@ -148,6 +142,14 @@ COUNTRY_NAMES = {
     "TR": "土耳其 (Turkey)",
     "AE": "阿联酋 (UAE)",
     "OTHER": "其他地区 (Other)",
+}
+
+VALID_SS_CIPHERS = {
+    "aes-128-gcm", "aes-192-gcm", "aes-256-gcm",
+    "chacha20-ietf-poly1305", "xchacha20-ietf-poly1305",
+    "2022-blake3-aes-128-gcm", "2022-blake3-aes-256-gcm",
+    "2022-blake3-chacha20-poly1305", "aes-128-ctr", "aes-192-ctr",
+    "aes-256-ctr", "aes-128-cfb", "aes-192-cfb", "aes-256-cfb", "rc4-md5"
 }
 
 def get_country_flag(country_code):
@@ -207,16 +209,10 @@ def extract_nodes_from_text(text):
 
 def fetch_raw_nodes():
     nodes = set()
-    # 挂载完备的桌面浏览器协议头，彻底解决 shadowmere.xyz 等源返回 0 节点的问题
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-        "Cache-Control": "no-cache",
-        "Pragma": "no-cache",
-        "sec-ch-ua": '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
     }
     print("[*] 正在抓取全部可用节点池...")
     for url in SOURCE_URLS:
@@ -230,16 +226,15 @@ def fetch_raw_nodes():
                 print(f"[!] 响应异常 {url} -> HTTP {resp.status_code}")
         except Exception as e:
             print(f"[!] 拉取失败 {url}: {e}")
-    print(f"[*] 初始去重总量: {len(nodes)} 个")
+    print(f"[*] 初始抓取总量: {len(nodes)} 个")
     return list(nodes)
 
 def parse_node_to_xray_outbound(node_str):
-    """完备支持 VLESS, VMess, Trojan, Shadowsocks(全格式), Hysteria2"""
     try:
         if node_str.startswith("vless://"):
             m = re.search(r"vless://([^@]+)@([^:]+):(\d+)\??(.*)", node_str)
             if not m:
-                return None, None, None
+                return None, None, None, "vless"
             uuid_str, server, port_s, query = m.groups()
             port = int(port_s)
             params = dict(re.findall(r"([^=&#]+)=([^&#]*)", query))
@@ -261,7 +256,7 @@ def parse_node_to_xray_outbound(node_str):
             if params.get("security") == "reality":
                 pbk = params.get("pbk", "")
                 if not pbk:
-                    return None, None, None
+                    return None, None, None, "vless"
                 outbound["streamSettings"]["realitySettings"] = {
                     "serverName": params.get("sni", server),
                     "publicKey": pbk,
@@ -278,7 +273,7 @@ def parse_node_to_xray_outbound(node_str):
                     "path": urllib.parse.unquote(params.get("path", "/")),
                     "headers": {"Host": params.get("host", server)}
                 }
-            return outbound, server, port
+            return outbound, server, port, "vless"
 
         elif node_str.startswith("vmess://"):
             b64 = node_str[8:]
@@ -288,7 +283,7 @@ def parse_node_to_xray_outbound(node_str):
             port = int(data.get("port", 0))
             uuid_str = str(data.get("id", "")).strip()
             if not server or port <= 0:
-                return None, None, None
+                return None, None, None, "vmess"
             
             is_tls = data.get("tls") in ["tls", "1"]
             outbound = {
@@ -315,12 +310,12 @@ def parse_node_to_xray_outbound(node_str):
                     "path": data.get("path", "/"),
                     "headers": {"Host": str(data.get("host", server)).strip()}
                 }
-            return outbound, server, port
+            return outbound, server, port, "vmess"
 
         elif node_str.startswith("trojan://"):
             m = re.search(r"trojan://([^@]+)@([^:]+):(\d+)\??(.*)", node_str)
             if not m:
-                return None, None, None
+                return None, None, None, "trojan"
             password, server, port_s, query = m.groups()
             port = int(port_s)
             params = dict(re.findall(r"([^=&#]+)=([^&#]*)", query))
@@ -336,14 +331,13 @@ def parse_node_to_xray_outbound(node_str):
                     "tlsSettings": {"serverName": params.get("sni", server), "allowInsecure": True}
                 }
             }
-            return outbound, server, port
+            return outbound, server, port, "trojan"
 
         elif node_str.startswith("ss://"):
             raw = node_str[5:]
             raw = raw.split("#")[0].strip()
             server, port, password, cipher = "", 0, "", ""
             
-            # 兼容 SIP002 标准：包含纯 Base64 或 userinfo@host:port
             if "@" in raw:
                 user_info, host_info = raw.split("@", 1)
                 user_info += '=' * (-len(user_info) % 4)
@@ -357,7 +351,6 @@ def parse_node_to_xray_outbound(node_str):
                     server, port_s = host_info.split("/")[0].split("?")[0].split(":", 1)
                     port = int(port_s)
             else:
-                # 纯 Base64 形式的 SIP002
                 padded = raw + '=' * (-len(raw) % 4)
                 try:
                     dec = base64.b64decode(padded).decode('utf-8', errors='ignore')
@@ -378,10 +371,9 @@ def parse_node_to_xray_outbound(node_str):
                         "servers": [{"address": server, "port": port, "method": cipher or "chacha20-ietf-poly1305", "password": password}]
                     }
                 }
-                return outbound, server, port
+                return outbound, server, port, "ss"
 
         elif node_str.startswith("hy2://") or node_str.startswith("hysteria2://"):
-            # 兼容 Hysteria2 协议提取
             prefix = "hy2://" if node_str.startswith("hy2://") else "hysteria2://"
             raw = node_str[len(prefix):].split("#")[0]
             m = re.search(r"([^@]+)@([^:/?#]+):(\d+)", raw)
@@ -394,17 +386,16 @@ def parse_node_to_xray_outbound(node_str):
                         "servers": [{"address": server, "port": port, "password": auth}]
                     }
                 }
-                return outbound, server, port
+                return outbound, server, port, "hysteria2"
     except Exception:
         pass
-    return None, None, None
+    return None, None, None, "unknown"
 
 def convert_to_clash_dict(node_str, name):
     try:
-        outbound, server, port = parse_node_to_xray_outbound(node_str)
+        outbound, server, port, proto = parse_node_to_xray_outbound(node_str)
         if not outbound:
             return None
-        proto = outbound["protocol"]
         if proto == "vless":
             user = outbound["settings"]["vnext"][0]["users"][0]
             stream = outbound["streamSettings"]
@@ -448,7 +439,6 @@ def convert_to_clash_dict(node_str, name):
             return proxy
         elif proto == "trojan":
             srv = outbound["settings"]["servers"][0]
-            stream = outbound["streamSettings"]
             return {
                 "name": name,
                 "type": "trojan",
@@ -459,7 +449,7 @@ def convert_to_clash_dict(node_str, name):
                 "sni": stream.get("tlsSettings", {}).get("serverName", server),
                 "skip-cert-verify": True
             }
-        elif proto == "shadowsocks":
+        elif proto == "ss":
             srv = outbound["settings"]["servers"][0]
             return {
                 "name": name,
@@ -486,13 +476,9 @@ def convert_to_clash_dict(node_str, name):
     return None
 
 def test_single_node_xray(node_tuple):
-    raw_node, server, port = node_tuple
-    outbound, _, _ = parse_node_to_xray_outbound(raw_node)
-    if not outbound:
-        return None
-
-    # Hysteria2 如果内核支持不完善直接标记跳过测试或本地代理
-    if outbound["protocol"] == "hysteria2":
+    raw_node, server, port, proto = node_tuple
+    outbound, _, _, _ = parse_node_to_xray_outbound(raw_node)
+    if not outbound or proto == "hysteria2":
         return None
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -528,12 +514,11 @@ def test_single_node_xray(node_tuple):
             "http": f"socks5h://127.0.0.1:{socks_port}",
             "https": f"socks5h://127.0.0.1:{socks_port}"
         }
-        # 1. 宽带友好型真连接握手：放宽至 6.5s，确保台湾、日本家宽不被误判为死节点
+        # 宽带握手放宽至 6.5s
         resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=6.5)
         if resp.status_code in [200, 204]:
             delay_ms = int((time.time() - start_t) * 1000)
             if 30 < delay_ms < 6300:
-                # 2. 实际穿透：抓取真实外网出口落地 IP，彻底解决国别漂移
                 ip_resp = requests.get("https://api.ipify.org?format=json", proxies=proxies, timeout=4.0)
                 if ip_resp.status_code == 200:
                     exit_ip = ip_resp.json().get("ip")
@@ -551,7 +536,7 @@ def test_single_node_xray(node_tuple):
             pass
 
     if success and exit_ip:
-        return (raw_node, server, port, exit_ip, delay_ms)
+        return (raw_node, server, port, proto, exit_ip, delay_ms)
     return None
 
 def run_real_delay_test_xray(candidates):
@@ -593,24 +578,18 @@ def get_rdns_host(ip):
         return ""
 
 def is_verified_residential_offline(ip, org_str, asn):
-    """
-    纯本地离线高精度住宅判定引擎：
-    1. 优先命中核心民用 ASN 白名单（中华电信、HKBN、PCCW 等）100% 确认家宽
-    2. 任何命中 IDC/机房/主机商关键词（如 netgrid, play2go, lagom 等），直接一票否决
-    3. 显式命中民用宽带特征词
-    """
-    # 核心白名单优先：港台日美核心民用 ISP 直接放行
+    """民用住宅判定：白名单优先，拦截已知机房"""
     if asn in TRUE_RESIDENTIAL_ASNS:
         return True
 
     info = f"{org_str} {get_rdns_host(ip)}".lower()
     
-    # 规则 1：命中机房词，100% 判定为 IDC 机房
+    # 命中机房词一票否决
     for kw in IDC_KEYWORDS:
         if kw in info:
             return False
             
-    # 规则 2：显式命中民用住宅运营商白名单
+    # 命中白名单放行
     for r_kw in RESIDENTIAL_WHITELIST_KEYWORDS:
         if r_kw in info:
             return True
@@ -623,9 +602,9 @@ def classify_and_filter(alive_nodes):
     verified = []
 
     def classify_item(item):
-        raw_node, server, port, exit_ip, delay = item
+        raw_node, server, port, proto, exit_ip, delay = item
 
-        # 以真实出口落地 IP 严格确定国家归属（彻底根除美国家宽显示为荷兰/日本的漏洞）
+        # 以真实出口落地 IP 确定国家归属
         country_code = "OTHER"
         try:
             c = country_reader.get(exit_ip)
@@ -636,7 +615,7 @@ def classify_and_filter(alive_nodes):
         except Exception:
             pass
 
-        # 核心防线 1：出口命中 Cloudflare CDN Anycast 一律排除家宽
+        # 核心防线：出口命中 Cloudflare CDN Anycast 一律排除家宽
         if is_cloudflare_cdn_ip(exit_ip):
             is_residential = False
         else:
@@ -646,7 +625,6 @@ def classify_and_filter(alive_nodes):
                 asn = a.get("autonomous_system_number", 0) if a else 0
                 org = str(a.get("autonomous_system_organization", "")).lower() if a else ""
                 
-                # 核心防线 2：排除已知数据中心 ASN，并做权威纯本地住宅特征核验
                 if asn not in DATACENTER_ASNS:
                     is_residential = is_verified_residential_offline(exit_ip, org, asn)
             except Exception:
@@ -663,10 +641,11 @@ def classify_and_filter(alive_nodes):
             "is_residential": is_residential,
             "exit_ip": exit_ip,
             "port": port,
+            "proto": proto,
             "delay": delay
         }
 
-    print("[*] 正在解析真实出口国家并鉴定住宅属性（严格对准真实落地出口 IP）...")
+    print("[*] 正在解析真实出口国家并鉴定住宅属性...")
     with ThreadPoolExecutor(max_workers=30) as executor:
         futures = [executor.submit(classify_item, item) for item in alive_nodes]
         for f in as_completed(futures):
@@ -677,16 +656,17 @@ def classify_and_filter(alive_nodes):
     country_reader.close()
     asn_reader.close()
 
-    # 在出库阶段以 (真实出口 IP, 端口) 进行全局单端口去重
+    # 关键修复：协议不同不杀！只要协议不同或参数不同均完整保留展示！
     unique_verified = []
-    seen_endpoints = set()
+    seen_keys = set()
     for item in verified:
-        endpoint = f"{item['exit_ip']}:{item['port']}"
-        if endpoint not in seen_endpoints:
-            seen_endpoints.add(endpoint)
+        # 去重 key 包含协议名，确保同端口的不同协议节点（SS、VLESS、Trojan 等）全部保留！
+        node_key = f"{item['proto']}://{item['exit_ip']}:{item['port']}"
+        if node_key not in seen_keys:
+            seen_keys.add(node_key)
             unique_verified.append(item)
 
-    print(f"[*] 全局物理出口单端口去重完成，最终出库独立节点数: {len(unique_verified)} 个")
+    print(f"[*] 协议级智能去重完成，保留所有不同协议可用节点，出库总数: {len(unique_verified)} 个")
     return unique_verified
 
 def export_clash_yaml(clash_proxies, filepath):
@@ -726,7 +706,7 @@ def format_node_group(nodes_list, res_tag_force=False):
     seen_local = set()
     cleaned = []
     for item in nodes_list:
-        ep = f"{item['exit_ip']}:{item['port']}"
+        ep = f"{item['proto']}://{item['exit_ip']}:{item['port']}"
         if ep not in seen_local:
             seen_local.add(ep)
             cleaned.append(item)
@@ -805,7 +785,6 @@ def export_subscriptions(verified_nodes):
     return len(all_links), len(res_links)
 
 def update_readme():
-    # 动态抓取当前仓库，无论你改什么仓库名都能自动适配
     repo_name = os.environ.get("GITHUB_REPOSITORY", "hezhanleiok/freesub").strip()
     cache_bust = int(time.time())
     
@@ -886,7 +865,6 @@ def update_readme():
         normal_rows.append(f"| {flag} {name} | {cnt} | {col_v2} | {col_clash} | {col_sb} |")
     normal_table_str = "\n".join(normal_rows) if normal_rows else "| 暂无可用节点 | 0 | - | - | - |"
 
-    # HTML 固定宽度布局：彻底解决表格第一列狭窄与横向滚动条问题
     readme_content = f"""# 🚀 免费节点自动测活订阅池 (含真实家宽/住宅IP甄选)
 
 > 👤 **定制规范命名**: 所有订阅节点均重命名为 `国旗 地区 序号 (家宽) - xiaohe`  
@@ -928,7 +906,7 @@ def update_readme():
 ---
 
 ## 🛠️ 项目使用说明
-1. **自动更新机制**：GitHub Actions 每 6 小时全自动运行并刷新上述全部订阅与数据。
+1. **自动更新机制**：GitHub Actions 每 6 小时全自动运行并刷新上述全部订阅与数据[cite: 4]。
 2. **多客户端兼容**：
    - **Clash / Clash Verge / Mihomo Party**：直接复制上方表格中的 **Clash 专属订阅** 链接[cite: 4]。
    - **v2rayN / v2rayNG**：直接复制上方表格中的 **V2RayN 专属订阅** 链接[cite: 4]。
@@ -943,11 +921,11 @@ if __name__ == "__main__":
     raw_nodes = fetch_raw_nodes()
 
     candidates = []
-    # 不在测活前过早去重，保留共用入口的优质家宽节点
+    # 测活前不提前去重，允许所有有效协议入场测活
     for raw in raw_nodes:
-        outbound, server, port = parse_node_to_xray_outbound(raw)
+        outbound, server, port, proto = parse_node_to_xray_outbound(raw)
         if outbound and server and port:
-            candidates.append((raw, server, port))
+            candidates.append((raw, server, port, proto))
 
     print(f"[*] 格式合规候选节点数: {len(candidates)}")
     alive_nodes = run_real_delay_test_xray(candidates)
