@@ -42,6 +42,7 @@ def ensure_directories():
 
 ensure_directories()
 
+# Cloudflare 官方全部 Anycast 网段（严禁进入家宽专区）
 CLOUDFLARE_IP_NETWORKS = [
     ipaddress.ip_network("173.245.48.0/20"),
     ipaddress.ip_network("103.21.244.0/22"),
@@ -70,6 +71,7 @@ def is_cloudflare_cdn_ip(ip_str):
         pass
     return False
 
+# 常见机房与数据中心 ASN
 DATACENTER_ASNS = {
     13335, 16509, 14618, 15169, 396982, 8075, 24940, 16276, 
     14061, 31898, 63949, 45102, 132203, 20473, 60068, 55081,
@@ -79,6 +81,7 @@ DATACENTER_ASNS = {
     200651, 202685, 210644, 205628, 51852, 204544, 397373
 }
 
+# 严格机房关键词
 IDC_KEYWORDS = [
     "hosting", "datacenter", "data center", "cloud", "server", "vps",
     "dedicated", "compute", "colo", "digitalocean", "linode", "ovh",
@@ -89,6 +92,7 @@ IDC_KEYWORDS = [
     "buyvm", "play2go", "fzco"
 ]
 
+# 核心民用宽带 ASN
 TRUE_RESIDENTIAL_ASNS = {
     3462, 9924, 17709, 4780, 18049,
     9269, 3491, 4760, 9304, 17816,
@@ -320,8 +324,7 @@ def parse_node_to_xray_outbound(node_str):
             return outbound, server, port, "trojan"
 
         elif node_str.startswith("ss://"):
-            raw = node_str[5:]
-            raw = raw.split("#")[0].strip()
+            raw = node_str[5:].split("#")[0].strip()
             server, port, password, cipher = "", 0, "", ""
             
             if "@" in raw:
@@ -429,7 +432,6 @@ def convert_to_clash_dict(node_str, name):
             return proxy
         elif proto == "trojan":
             srv = outbound["settings"]["servers"][0]
-            stream = outbound["streamSettings"]
             return {
                 "name": name,
                 "type": "trojan",
@@ -499,24 +501,31 @@ def test_single_node_xray(node_tuple):
     success = False
     delay_ms = 0
     exit_ip = None
+    is_confirmed_exit = False
     start_t = time.time()
     try:
         proxies = {
             "http": f"socks5h://127.0.0.1:{socks_port}",
             "https": f"socks5h://127.0.0.1:{socks_port}"
         }
-        # 严苛双向握手：放宽至 6.5s 兼顾抗阻断与高延迟家宽
         resp = requests.get("https://www.google.com/generate_204", proxies=proxies, timeout=6.5)
         if resp.status_code in [200, 204]:
             delay_ms = int((time.time() - start_t) * 1000)
             if 30 < delay_ms < 6300:
-                try:
-                    ip_resp = requests.get("https://api.ipify.org?format=json", proxies=proxies, timeout=3.0)
-                    if ip_resp.status_code == 200:
-                        exit_ip = ip_resp.json().get("ip")
-                except Exception:
-                    pass
-
+                # 严格通过代理穿透向公网 API 获取真实出网 IP
+                for check_url in ["https://api.ipify.org?format=json", "https://ip.seeip.org/json"]:
+                    try:
+                        ip_resp = requests.get(check_url, proxies=proxies, timeout=3.0)
+                        if ip_resp.status_code == 200:
+                            fetched = ip_resp.json().get("ip")
+                            if fetched:
+                                exit_ip = fetched
+                                is_confirmed_exit = True
+                                break
+                    except Exception:
+                        pass
+                
+                # 若无法穿透拿到落地 IP，仅以普通可用出库，绝不打上真出口标签
                 if not exit_ip:
                     try:
                         exit_ip = socket.gethostbyname(server)
@@ -535,7 +544,7 @@ def test_single_node_xray(node_tuple):
             pass
 
     if success and exit_ip:
-        return (raw_node, server, port, proto, exit_ip, delay_ms)
+        return (raw_node, server, port, proto, exit_ip, delay_ms, is_confirmed_exit)
     return None
 
 def run_real_delay_test_xray(candidates):
@@ -562,7 +571,6 @@ def rename_node_link(raw_link, new_name):
             new_b64 = base64.b64encode(json.dumps(data, ensure_ascii=False).encode('utf-8')).decode('utf-8')
             return f"vmess://{new_b64}"
         elif any(raw_link.startswith(p) for p in ["vless://", "trojan://", "ss://", "hy2://", "hysteria2://"]):
-            # 严格保留 URL 参数，只替换最后的 hash 别名，确保客户端能正常识别
             base_part = raw_link.split("#")[0].strip()
             return f"{base_part}#{new_name}"
     except Exception:
@@ -598,7 +606,7 @@ def classify_and_filter(alive_nodes):
     verified = []
 
     def classify_item(item):
-        raw_node, server, port, proto, exit_ip, delay = item
+        raw_node, server, port, proto, exit_ip, delay, is_confirmed_exit = item
 
         country_code = "OTHER"
         try:
@@ -610,7 +618,8 @@ def classify_and_filter(alive_nodes):
         except Exception:
             pass
 
-        if is_cloudflare_cdn_ip(exit_ip):
+        # 核心拦截：如果未拿到经代理穿透的真实出网 IP，或命中 Cloudflare CDN，一票否决家宽属性
+        if not is_confirmed_exit or is_cloudflare_cdn_ip(exit_ip):
             is_residential = False
         else:
             is_residential = False
@@ -650,18 +659,27 @@ def classify_and_filter(alive_nodes):
     country_reader.close()
     asn_reader.close()
 
-    # 智能保留所有不同协议、不同参数的节点
-    unique_verified = []
-    seen_keys = set()
+    # 关键防线：普通池保留不同配置，家宽专区强制单 IP 严格去重（杜绝 40 个重复高危 IP 刷屏）
+    unique_all = []
+    seen_all = set()
+    seen_res_ips = set()
+
     for item in verified:
         link_core = item["link"].split("#")[0].strip()
-        node_key = f"{item['proto']}://{item['exit_ip']}:{item['port']}_{hash(link_core)}"
-        if node_key not in seen_keys:
-            seen_keys.add(node_key)
-            unique_verified.append(item)
+        all_key = f"{item['proto']}://{item['exit_ip']}:{item['port']}_{hash(link_core)}"
+        if all_key not in seen_all:
+            seen_all.add(all_key)
+            
+            # 若标记为家宽，但该物理出口 IP 已存在，直接降级为普通节点，绝不重复生成
+            if item["is_residential"]:
+                if item["exit_ip"] in seen_res_ips:
+                    item["is_residential"] = False
+                else:
+                    seen_res_ips.add(item["exit_ip"])
+            unique_all.append(item)
 
-    print(f"[*] 协议级智能去重完成，保留所有不同协议可用节点，出库总数: {len(unique_verified)} 个")
-    return unique_verified
+    print(f"[*] 智能去重与家宽防刷完成，出库总节点: {len(unique_all)} 个，纯净独立家宽: {len(seen_res_ips)} 个")
+    return unique_all
 
 def export_clash_yaml(clash_proxies, filepath):
     names = [p["name"] for p in clash_proxies]
@@ -697,16 +715,7 @@ def format_node_group(nodes_list, res_tag_force=False):
     formatted_links = []
     formatted_proxies = []
     
-    seen_local = set()
-    cleaned = []
-    for item in nodes_list:
-        link_core = item["link"].split("#")[0].strip()
-        ep = f"{item['proto']}://{item['exit_ip']}:{item['port']}_{hash(link_core)}"
-        if ep not in seen_local:
-            seen_local.add(ep)
-            cleaned.append(item)
-
-    for idx, item in enumerate(cleaned, start=1):
+    for idx, item in enumerate(nodes_list, start=1):
         cc = item["country"]
         flag = get_country_flag(cc)
         c_name = COUNTRY_NAMES.get(cc, cc)
@@ -959,11 +968,11 @@ export default {
 ---
 
 ## 🛠️ 项目使用说明
-1. **自动更新机制**：GitHub Actions 每 6 小时全自动运行并刷新上述全部订阅与数据[cite: 4]。
+1. **自动更新机制**：GitHub Actions 每 6 小时全自动运行并刷新上述全部订阅与数据。
 2. **多客户端兼容**：
-   - **Clash / Clash Verge / Mihomo Party**：直接复制上方表格中的 **Clash 专属订阅** 链接[cite: 4]。
-   - **v2rayN / v2rayNG**：直接复制上方表格中的 **V2RayN 专属订阅** 链接[cite: 4]。
-   - **sing-box**：直接使用上方 **sing-box 专属订阅** 链接[cite: 4]。
+   - **Clash / Clash Verge / Mihomo Party**：直接复制上方表格中的 **Clash 专属订阅** 链接。
+   - **v2rayN / v2rayNG**：直接复制上方表格中的 **V2RayN 专属订阅** 链接。
+   - **sing-box**：直接使用上方 **sing-box 专属订阅** 链接。
 """
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_content)
