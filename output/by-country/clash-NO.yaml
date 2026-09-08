@@ -34,7 +34,7 @@ proxies:
   reality-opts:
     public-key: 5RCgAVjaT7hwdVIKAEULswXGqR127ZOZV6X17nEhYk8
   servername: bowandbead.com
-  client-fingerprint: ios
+  client-fingerprint: qq
 - name: 🇳🇴 NO 04 - xiaohe
   type: vless
   server: 151.242.168.125
@@ -46,7 +46,7 @@ proxies:
   reality-opts:
     public-key: 5RCgAVjaT7hwdVIKAEULswXGqR127ZOZV6X17nEhYk8
   servername: bowandbead.com
-  client-fingerprint: chrome
+  client-fingerprint: edge
 proxy-groups:
 - name: PROXIES
   type: select
