@@ -4,31 +4,30 @@ allow-lan: true
 mode: rule
 log-level: info
 proxies:
-- name: 🇮🇩 ID 01 (家宽) - xiaohe
+- name: 🇰🇷 韩国 (South Korea) 01 (家宽) - xiaohe
   type: vless
-  server: 188.114.97.6
-  port: 443
-  uuid: 1246e51a-97cd-4d5c-9842-76dd3420bbe2
+  server: 104.21.23.72
+  port: 8880
+  uuid: 25844c02-a1fe-43ec-a6b9-44e3bf375b83
   udp: true
-  tls: true
+  tls: false
   skip-cert-verify: true
-  servername: investor.fb.com.r3xxe.eu.cc
   network: ws
   ws-opts:
-    path: /id-tksi
+    path: /pyip=ProxyIP.KR.CMLiussss.net
     headers:
-      Host: investor.fb.com.r3xxe.eu.cc
+      Host: dark-breeze-a59a.494.workers.dev
 proxy-groups:
 - name: PROXIES
   type: select
   proxies:
   - AUTO
-  - 🇮🇩 ID 01 (家宽) - xiaohe
+  - 🇰🇷 韩国 (South Korea) 01 (家宽) - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
   interval: 300
   proxies:
-  - 🇮🇩 ID 01 (家宽) - xiaohe
+  - 🇰🇷 韩国 (South Korea) 01 (家宽) - xiaohe
 rules:
 - MATCH,PROXIES
