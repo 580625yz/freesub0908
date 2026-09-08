@@ -6,56 +6,6 @@ log-level: info
 proxies:
 - name: 🇪🇪 EE 01 - xiaohe
   type: vless
-  server: 94.183.170.248
-  port: 8443
-  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇪🇪 EE 02 - xiaohe
-  type: vless
-  server: 94.183.170.248
-  port: 443
-  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
-  udp: true
-  tls: false
-  skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: 94.183.170.248
-- name: 🇪🇪 EE 03 - xiaohe
-  type: vless
-  server: 94.183.170.135
-  port: 8443
-  uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇪🇪 EE 04 - xiaohe
-  type: vless
-  server: estproxy3.lockdwn.com
-  port: 8443
-  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇪🇪 EE 05 - xiaohe
-  type: vless
-  server: 94.183.170.248
-  port: 443
-  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
-  udp: true
-  tls: false
-  skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /
-    headers:
-      Host: 94.183.170.248
-- name: 🇪🇪 EE 06 - xiaohe
-  type: vless
   server: 94.183.170.135
   port: 443
   uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
@@ -67,6 +17,56 @@ proxies:
     path: /
     headers:
       Host: 94.183.170.135
+- name: 🇪🇪 EE 02 - xiaohe
+  type: vless
+  server: 94.183.170.248
+  port: 8443
+  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: estproxy3.lockdwn.com
+- name: 🇪🇪 EE 03 - xiaohe
+  type: vless
+  server: 94.183.170.248
+  port: 8443
+  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: estproxy3.lockdwn.com
+- name: 🇪🇪 EE 04 - xiaohe
+  type: vless
+  server: 94.183.170.135
+  port: 8443
+  uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: estproxy4.lockdwn.com
+- name: 🇪🇪 EE 05 - xiaohe
+  type: vless
+  server: estproxy3.lockdwn.com
+  port: 8443
+  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: estproxy3.lockdwn.com
+- name: 🇪🇪 EE 06 - xiaohe
+  type: vless
+  server: 172.67.67.178
+  port: 443
+  uuid: aebe5a70-0ca3-46ce-8208-8b5bab1346ce
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: rAyAn-007.nAsTaRaN.DpDnS.OrG
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: rAyAn-007.nAsTaRaN.DpDnS.OrG
 - name: 🇪🇪 EE 07 - xiaohe
   type: vless
   server: 94.183.170.248
@@ -75,7 +75,51 @@ proxies:
   udp: true
   tls: true
   skip-cert-verify: true
+  servername: estproxy3.lockdwn.com
 - name: 🇪🇪 EE 08 - xiaohe
+  type: trojan
+  server: 109.206.241.10
+  port: 449
+  password: oiiaB38ywjEHCWRs_O_a_1113_Il_KeyyyHop_Bes1
+  udp: true
+  sni: russiapower.accesscam.org
+  skip-cert-verify: true
+- name: 🇪🇪 EE 09 - xiaohe
+  type: vless
+  server: 94.183.170.248
+  port: 443
+  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
+  udp: true
+  tls: false
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 94.183.170.248
+- name: 🇪🇪 EE 10 - xiaohe
+  type: vless
+  server: 94.183.170.248
+  port: 443
+  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
+  udp: true
+  tls: false
+  skip-cert-verify: true
+  network: ws
+  ws-opts:
+    path: /
+    headers:
+      Host: 94.183.170.248
+- name: 🇪🇪 EE 11 - xiaohe
+  type: vless
+  server: 94.183.170.135
+  port: 8443
+  uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: estproxy4.lockdwn.com
+- name: 🇪🇪 EE 12 - xiaohe
   type: vless
   server: 94.183.170.248
   port: 8443
@@ -83,7 +127,17 @@ proxies:
   udp: true
   tls: true
   skip-cert-verify: true
-- name: 🇪🇪 EE 09 - xiaohe
+  servername: estproxy3.lockdwn.com
+- name: 🇪🇪 EE 13 - xiaohe
+  type: vless
+  server: 94.183.170.135
+  port: 8443
+  uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
+  udp: true
+  tls: true
+  skip-cert-verify: true
+  servername: estproxy4.lockdwn.com
+- name: 🇪🇪 EE 14 - xiaohe
   type: vless
   server: 94.183.170.135
   port: 443
@@ -96,43 +150,6 @@ proxies:
     path: /
     headers:
       Host: 94.183.170.135
-- name: 🇪🇪 EE 10 - xiaohe
-  type: vless
-  server: 94.183.170.135
-  port: 8443
-  uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇪🇪 EE 11 - xiaohe
-  type: vless
-  server: 94.183.170.248
-  port: 8443
-  uuid: 9d9e3421-5652-4804-85ba-238355b948ab
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇪🇪 EE 12 - xiaohe
-  type: vless
-  server: 94.183.170.135
-  port: 8443
-  uuid: 06c4e938-2954-478f-a870-ca1b163e30e9
-  udp: true
-  tls: true
-  skip-cert-verify: true
-- name: 🇪🇪 EE 13 - xiaohe
-  type: vless
-  server: 172.67.67.178
-  port: 443
-  uuid: aebe5a70-0ca3-46ce-8208-8b5bab1346ce
-  udp: true
-  tls: true
-  skip-cert-verify: true
-  network: ws
-  ws-opts:
-    path: /?ed=2560
-    headers:
-      Host: rayan-007.nastaran.dpdns.org
 proxy-groups:
 - name: PROXIES
   type: select
@@ -151,6 +168,7 @@ proxy-groups:
   - 🇪🇪 EE 11 - xiaohe
   - 🇪🇪 EE 12 - xiaohe
   - 🇪🇪 EE 13 - xiaohe
+  - 🇪🇪 EE 14 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -169,5 +187,6 @@ proxy-groups:
   - 🇪🇪 EE 11 - xiaohe
   - 🇪🇪 EE 12 - xiaohe
   - 🇪🇪 EE 13 - xiaohe
+  - 🇪🇪 EE 14 - xiaohe
 rules:
 - MATCH,PROXIES

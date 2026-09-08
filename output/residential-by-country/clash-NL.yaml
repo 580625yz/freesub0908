@@ -12,6 +12,7 @@ proxies:
   udp: true
   tls: true
   skip-cert-verify: true
+  servername: rAyAn-007.mAxImA.DpDnS.OrG
   network: ws
   ws-opts:
     path: /?ed=2560
