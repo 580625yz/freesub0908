@@ -6,50 +6,162 @@ log-level: info
 proxies:
 - name: 🇷🇴 RO 01 - xiaohe
   type: hysteria2
-  server: 205.237.109.171
-  port: 8443
-  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  server: 162.249.124.118
+  port: 8080
+  password: 9Me_Jx935gnHx13_Nx45M_NYXe037js_Be4z
   udp: true
   skip-cert-verify: true
 - name: 🇷🇴 RO 02 - xiaohe
   type: hysteria2
-  server: 85.204.107.181
-  port: 8080
-  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  server: 162.249.125.133
+  port: 443
+  password: QCgqi_I4EkV8UR-OgQ_tG4EnVTEVvIyR2GgRBzrIn2s
   udp: true
   skip-cert-verify: true
 - name: 🇷🇴 RO 03 - xiaohe
-  type: hysteria2
-  server: 162.249.126.6
-  port: 8443
-  password: 9Me_Jx935gnHx13_Nx45M_NYXe037js_Be4z
-  udp: true
-  skip-cert-verify: true
-- name: 🇷🇴 RO 04 - xiaohe
-  type: hysteria2
-  server: 205.237.109.175
-  port: 8443
-  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
-  udp: true
-  skip-cert-verify: true
-- name: 🇷🇴 RO 05 - xiaohe
-  type: hysteria2
-  server: 205.237.109.162
-  port: 8443
-  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
-  udp: true
-  skip-cert-verify: true
-- name: 🇷🇴 RO 06 - xiaohe
   type: hysteria2
   server: 205.237.109.163
   port: 8443
   password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
   udp: true
   skip-cert-verify: true
+- name: 🇷🇴 RO 04 - xiaohe
+  type: hysteria2
+  server: 205.237.109.162
+  port: 8443
+  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 05 - xiaohe
+  type: hysteria2
+  server: 85.204.107.181
+  port: 8080
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 06 - xiaohe
+  type: hysteria2
+  server: 85.204.107.181
+  port: 8080
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
 - name: 🇷🇴 RO 07 - xiaohe
+  type: ss
+  server: 154.46.31.106
+  port: 443
+  cipher: chacha20-ietf-poly1305
+  password: QFWzCw2uX9B9i6qAYeFBIE
+  udp: true
+- name: 🇷🇴 RO 08 - xiaohe
+  type: hysteria2
+  server: 162.249.126.2
+  port: 8443
+  password: 9Me_Jx935gnHx13_Nx45M_NYXe037js_Be4z
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 09 - xiaohe
+  type: hysteria2
+  server: 162.249.126.6
+  port: 8443
+  password: 9Me_Jx935gnHx13_Nx45M_NYXe037js_Be4z
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 10 - xiaohe
+  type: hysteria2
+  server: hy2.aspidnet.xyz
+  port: 443
+  password: p7Q76LzlnS4hIzr1W3staBOnUe_WwSkR
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 11 - xiaohe
+  type: hysteria2
+  server: 85.204.107.173
+  port: 8080
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 12 - xiaohe
+  type: hysteria2
+  server: 205.237.109.164
+  port: 8443
+  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 13 - xiaohe
+  type: hysteria2
+  server: 205.237.109.164
+  port: 8443
+  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 14 - xiaohe
   type: hysteria2
   server: 85.204.107.178
   port: 8080
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 15 - xiaohe
+  type: hysteria2
+  server: 85.204.107.185
+  port: 8443
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 16 - xiaohe
+  type: hysteria2
+  server: 205.237.109.165
+  port: 8443
+  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 17 - xiaohe
+  type: hysteria2
+  server: 85.204.107.181
+  port: 8080
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 18 - xiaohe
+  type: hysteria2
+  server: lmny.mangshe.xyz
+  port: 2056
+  password: 41f0d6d3-4a45-4635-8225-2abd2284189b
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 19 - xiaohe
+  type: ss
+  server: bogging-eyeteeth-fly.freesocks.work
+  port: 443
+  cipher: chacha20-ietf-poly1305
+  password: QFWzCw2uX9B9i6qAYeFBIE
+  udp: true
+- name: 🇷🇴 RO 20 - xiaohe
+  type: hysteria2
+  server: 205.237.109.162
+  port: 8443
+  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 21 - xiaohe
+  type: hysteria2
+  server: 205.237.109.163
+  port: 8443
+  password: Oz_Kx9342gefwJ89x3_M9z32kzf9KJq003_s
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 22 - xiaohe
+  type: hysteria2
+  server: 85.204.107.178
+  port: 8080
+  password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
+  udp: true
+  skip-cert-verify: true
+- name: 🇷🇴 RO 23 - xiaohe
+  type: hysteria2
+  server: 85.204.107.177
+  port: 8443
   password: Jz40_mIJ934vK0_k9D3jz92_Vx48q_GHa1_sz0
   udp: true
   skip-cert-verify: true
@@ -65,6 +177,22 @@ proxy-groups:
   - 🇷🇴 RO 05 - xiaohe
   - 🇷🇴 RO 06 - xiaohe
   - 🇷🇴 RO 07 - xiaohe
+  - 🇷🇴 RO 08 - xiaohe
+  - 🇷🇴 RO 09 - xiaohe
+  - 🇷🇴 RO 10 - xiaohe
+  - 🇷🇴 RO 11 - xiaohe
+  - 🇷🇴 RO 12 - xiaohe
+  - 🇷🇴 RO 13 - xiaohe
+  - 🇷🇴 RO 14 - xiaohe
+  - 🇷🇴 RO 15 - xiaohe
+  - 🇷🇴 RO 16 - xiaohe
+  - 🇷🇴 RO 17 - xiaohe
+  - 🇷🇴 RO 18 - xiaohe
+  - 🇷🇴 RO 19 - xiaohe
+  - 🇷🇴 RO 20 - xiaohe
+  - 🇷🇴 RO 21 - xiaohe
+  - 🇷🇴 RO 22 - xiaohe
+  - 🇷🇴 RO 23 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
@@ -77,5 +205,21 @@ proxy-groups:
   - 🇷🇴 RO 05 - xiaohe
   - 🇷🇴 RO 06 - xiaohe
   - 🇷🇴 RO 07 - xiaohe
+  - 🇷🇴 RO 08 - xiaohe
+  - 🇷🇴 RO 09 - xiaohe
+  - 🇷🇴 RO 10 - xiaohe
+  - 🇷🇴 RO 11 - xiaohe
+  - 🇷🇴 RO 12 - xiaohe
+  - 🇷🇴 RO 13 - xiaohe
+  - 🇷🇴 RO 14 - xiaohe
+  - 🇷🇴 RO 15 - xiaohe
+  - 🇷🇴 RO 16 - xiaohe
+  - 🇷🇴 RO 17 - xiaohe
+  - 🇷🇴 RO 18 - xiaohe
+  - 🇷🇴 RO 19 - xiaohe
+  - 🇷🇴 RO 20 - xiaohe
+  - 🇷🇴 RO 21 - xiaohe
+  - 🇷🇴 RO 22 - xiaohe
+  - 🇷🇴 RO 23 - xiaohe
 rules:
 - MATCH,PROXIES
