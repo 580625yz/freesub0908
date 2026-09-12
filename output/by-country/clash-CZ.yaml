@@ -4,31 +4,31 @@ allow-lan: true
 mode: rule
 log-level: info
 proxies:
-- name: 🇹🇷 土耳其 (Turkey) 01 - xiaohe
+- name: 🇨🇿 CZ 01 - xiaohe
   type: vless
-  server: 162.159.91.222
+  server: 172.67.203.158
   port: 443
-  uuid: 50414e45-4c5f-5a45-5553-723a643df685
+  uuid: 911b84e1-d046-4fbf-bfc0-c168791115ef
   udp: true
   tls: true
   skip-cert-verify: true
-  servername: n3zaxce7u0es.crzl48eiuses.workers.dev
+  servername: 12ygbae0k3gn0z0f.mehrshadhaddadi8.workers.dev
   network: ws
   ws-opts:
-    path: /stream/PANEL_ZEUS/723a643df685/loc-0
+    path: /vl/YCNmDFbqMu7cgTzgsfEWGtBD8kR
     headers:
-      Host: n3zaxce7u0es.crzl48eiuses.workers.dev
+      Host: 12ygbae0k3gn0z0f.mehrshadhaddadi8.workers.dev
 proxy-groups:
 - name: PROXIES
   type: select
   proxies:
   - AUTO
-  - 🇹🇷 土耳其 (Turkey) 01 - xiaohe
+  - 🇨🇿 CZ 01 - xiaohe
 - name: AUTO
   type: url-test
   url: https://www.google.com/generate_204
   interval: 300
   proxies:
-  - 🇹🇷 土耳其 (Turkey) 01 - xiaohe
+  - 🇨🇿 CZ 01 - xiaohe
 rules:
 - MATCH,PROXIES
